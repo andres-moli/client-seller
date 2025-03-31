@@ -64,7 +64,7 @@ export interface IGeneralActions {
 
 /*------------------- store -------------------*/
 
-const useGeneral = create<IGeneral & IGeneralActions>()(devtools(persist((set, get) => ({
+const useGeneral = create<IGeneral & IGeneralActions>()(devtools(persist((set) => ({
     isLogged: undefined,
     currentTheme: "GreenThemeResponsive",
 

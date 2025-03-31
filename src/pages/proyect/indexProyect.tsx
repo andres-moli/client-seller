@@ -321,7 +321,7 @@ function CotizacionesTab({id}: { id: string}) {
   );
 }
 
-function DocumentosTab({comments, loading, id}: {comments: ProyectComment[], loading: boolean, id: string}) {
+function DocumentosTab({comments, id}: {comments: ProyectComment[], loading: boolean, id: string}) {
   const files = comments.filter(comment => comment.file)
   const [file, setFile] = useState<React.ChangeEvent<HTMLInputElement>>();
   const [createTask] = useCreateProyectCommentMutation()

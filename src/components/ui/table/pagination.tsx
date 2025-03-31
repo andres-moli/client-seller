@@ -51,7 +51,7 @@ export const Pagination = ({
   };
 
   const getPageRange = () => {
-    const range = [];
+    const range: number[] = [];
     const maxVisiblePages = 5;
     let start = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
     let end = Math.min(totalPages, start + maxVisiblePages - 1);

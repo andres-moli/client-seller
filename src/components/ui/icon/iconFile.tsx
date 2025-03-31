@@ -1,4 +1,5 @@
 import { FileText, FileImage, File, FileSpreadsheetIcon, LucideFileSymlink, FileVideo } from "lucide-react";
+import { TaskComment } from "../../../domain/graphql";
 
 const getFileIcon = (extension: string) => {
   switch (extension.toLowerCase()) {
@@ -26,8 +27,8 @@ const getFileIcon = (extension: string) => {
   }
 };
 
-const FileIcon = ({ comment }: { comment: { file: { fileExtension: string } } }) => {
-  return <div>{getFileIcon(comment.file.fileExtension)}</div>;
+const FileIcon = ({ comment }: { comment: TaskComment}) => {
+  return <div>{getFileIcon(comment?.file?.fileExtension || '')}</div>;
 };
 
 export default FileIcon;

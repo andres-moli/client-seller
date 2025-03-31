@@ -23,7 +23,6 @@ interface IMunicipalitySelect {
 export const DepartmentAndMunicipality = ({
   departmentId: propDepartmentId = "",
   municipalityId: propMunicipalityId = "",
-  disabledDepartment = false,
   disabledMunicipality = false,
   onChange,
 }: DepartmentAndMunicipalityProps) => {
@@ -91,7 +90,6 @@ export const DepartmentAndMunicipality = ({
 
 const MunicipalitySelect = ({
   departmentId,
-  disabled = false,
   onChange,
   currentMunicipalityId = ""
 }: IMunicipalitySelect) => {

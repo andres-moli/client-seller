@@ -65,6 +65,7 @@ export default function StatisticsChart({ data }: Props) {
     tooltip: {
       enabled: true,
       shared: true,
+      // @ts-ignore
       y: {
         formatter: (value: number, { seriesIndex, dataPointIndex }) => {
           const item = sortedData[dataPointIndex];

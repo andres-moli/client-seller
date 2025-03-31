@@ -39,9 +39,6 @@ const AppLayout: React.FC = () => {
         token: Cookies.get(import.meta.env.VITE_APP_KEY_COOKIE_SESSION) ?? "",
       },
     },
-    onCompleted: (data) => {
-
-    },
     onError: (error) => {
       console.log("error", error);
       navigate("/signin");

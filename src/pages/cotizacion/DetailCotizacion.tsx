@@ -210,6 +210,7 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
     }
 
     const dataCotizacion = data?.cotizacion
+    //@ts-ignore
     const resultados = calcularTotalesYUtilidad(dataCotizacion?.detalle || []);
     return(
         <>

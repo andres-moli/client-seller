@@ -24,7 +24,7 @@ export async function privateFetcherPost<T>(route: string, options?: any) {
     return response
 }
 
-export async function privateFetcher<T>(route: string, options?: any) {
+export async function privateFetcher<T>(route: string) {
     let userCookie = Cookies.get(import.meta.env.VITE_APP_KEY_COOKIE_SESSION)
     const response: T = await axiosRest.get(route, { headers: { "Authorization": `Bearer ${userCookie}` } }).then((res) => res.data)
     return response

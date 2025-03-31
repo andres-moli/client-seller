@@ -62,11 +62,11 @@ export const CreateTaskCommentModal: React.FC<CreateTaskModalProps> = ({ isOpen,
       }
 
       if (result.isConfirmed) {
-        let fileId = null
+        let fileId: null | string = null
         if(file){
           if(file?.target?.files?.[0]){
             const dataFile = await handleUploadImage(file?.target?.files?.[0])
-            fileId = dataFile?.id
+            fileId = dataFile?.id || ''
           }else {
             toast.error('No se selecionaste un archivo para subir')
             return

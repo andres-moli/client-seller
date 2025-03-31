@@ -80,6 +80,7 @@ const ColombiaMap: React.FC<ColombiaMapProps> = ({ ventas }) => {
           width: "100%",
           height: "100%",
         }}
+        //@ts-ignore
         markers={getSelectedMarkers(ventas)}
         markerStyle={{
           initial: {
