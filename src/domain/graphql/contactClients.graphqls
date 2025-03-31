@@ -1,0 +1,63 @@
+query ClientContacts($orderBy: [FindClientContactOrderBy!], $pagination: Pagination,$where: FindClientContactWhere) {
+  clientContacts(orderBy: $orderBy, pagination: $pagination,where: $where) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    celular
+    email
+    position
+    telefono
+    client {
+      id
+      name
+      numberDocument
+      telefono
+      type
+      email
+    }
+  }
+  clientContactsCount(orderBy: $orderBy, pagination: $pagination,where: $where) {
+    totalItems
+    itemsPerPage
+    totalPages
+    currentPage
+  }
+}
+
+
+query ClientsOptions {
+  clients {
+    id
+    name
+  }
+}
+
+query Positions {
+  positions {
+    id
+    name
+  }
+}
+
+mutation RemoveClientContact($removeClientContactId: ID!) {
+  removeClientContact(id: $removeClientContactId) {
+    id
+    name
+  }
+}
+
+mutation UpdateClientContact($updateInput: UpdateClientContactInput!) {
+  updateClientContact(updateInput: $updateInput) {
+    id
+    name
+  }
+}
+
+mutation CreateClientContact($createInput: CreateClientContactInput!) {
+  createClientContact(createInput: $createInput) {
+    id
+    name
+  }
+}

@@ -1,0 +1,34 @@
+query VentasPorVendedor($input: GetSalesInput!) {
+  ventasPorVendedor(input: $input) {
+    vendedor
+    nombre_mes
+    numero_mes
+    venta
+    costo
+    oip
+    flete
+    back
+    utilidad
+    utilidad_porcentaje
+  }
+}
+query VentasPorVendedorDepartamento($input: GetSalesInput!) {
+  ventasPorVendedorDepartamento(input: $input) {
+    vendedor
+    departamento
+    venta
+    costo
+    oip
+    flete
+    back
+    utilidad
+    utilidad_porcentaje
+  }
+}
+query GetDataDashboard($getDataDashboardId: String!) {
+  getDataDashboard(id: $getDataDashboardId) {
+    label
+    total
+    idUser
+  }
+}

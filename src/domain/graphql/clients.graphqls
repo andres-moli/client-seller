@@ -1,0 +1,137 @@
+query Clients {
+  clients {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    numberDocument
+    email
+    telefono
+    address
+    descripcion
+    type
+    vertical
+    celular
+
+  }
+}
+query ClientsUser($orderBy: [FindClientOrderBy!], $where: FindClientWhere, $pagination: Pagination) {
+  clients(orderBy: $orderBy, where: $where, pagination: $pagination) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    numberDocument
+    email
+    telefono
+    address
+    type
+    vertical
+    descripcion
+    celular
+    city {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      code
+      name
+    }
+    department {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      code
+      name
+    }
+    country {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      code
+      name
+    }
+    user {
+      name
+      id
+      email
+    }
+  }
+  clientsCount(orderBy: $orderBy, where: $where, pagination: $pagination) {
+    totalItems
+    itemsPerPage
+    totalPages
+    currentPage
+  }
+}
+query Client($clientId: ID!) {
+  client(id: $clientId) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    numberDocument
+    email
+    telefono
+    address
+    type
+    vertical
+    celular
+    descripcion
+    department {
+      id
+      name
+    }
+    city {
+      id
+      name
+    }
+    user {
+      id
+      fullName
+    }
+  }
+}
+
+mutation CreateClient($createInput: CreateClientInput!) {
+  createClient(createInput: $createInput) {
+    id
+  }
+}
+
+mutation RemoveClient($removeClientId: ID!) {
+  removeClient(id: $removeClientId) {
+    id
+  }
+}
+
+mutation UpdateClient($updateInput: UpdateClientInput!) {
+  updateClient(updateInput: $updateInput) {
+    id
+  }
+}
+
+query VisitComents($orderBy: [FindVisitComentOrderBy!], $where: FindVisitComentWhere) {
+  visitComents(orderBy: $orderBy, where: $where) {
+    status
+    type
+    user {
+      name
+    }
+    id
+    description
+    createdAt
+    date
+    visit {
+      id
+      client {
+        name
+      }
+    }
+  }
+}

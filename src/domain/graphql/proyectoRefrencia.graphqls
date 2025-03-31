@@ -1,0 +1,40 @@
+query TipoProyectos {
+  tipoProyectos {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    nombre
+    descripcion
+    isActive
+  }
+}
+query MarcaProyectos {
+  marcaProyectos {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    nombre
+    isActive
+    referencias {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      codigo
+      descripcion
+      isActive
+    }
+  }
+}
+mutation RemoveProyectoReferencia($removeProyectoReferenciaId: ID!) {
+  removeProyectoReferencia(id: $removeProyectoReferenciaId) {
+    id   
+  }
+}
+mutation CreateProyectoReferencia($createInput: AddReferenciaToProyectoInput!) {
+  createProyectoReferencia(createInput: $createInput) {
+    id
+  }
+}

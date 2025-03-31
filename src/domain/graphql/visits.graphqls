@@ -1,0 +1,247 @@
+query Visits($orderBy: [FindVisitOrderBy!], $where: FindVisitWhere, $pagination: Pagination) {
+  visits(orderBy: $orderBy, where: $where, pagination: $pagination) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    description
+    location
+    dateVisit
+    status
+    isProyect
+    latitude
+    longitude
+    client {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      name
+      numberDocument
+      email
+      telefono
+      address
+      type
+      vertical
+      celular
+      city {
+        id
+        createdAt
+        updatedAt
+        deletedAt
+        code
+        name
+      }
+      department {
+        id
+        createdAt
+        updatedAt
+        deletedAt
+        code
+        name
+      }
+      country {
+        id
+        createdAt
+        updatedAt
+        deletedAt
+        code
+        name
+      }
+    }
+    type {
+       id
+       createdAt
+       updatedAt
+       deletedAt
+       name
+       description
+       status
+    }
+    user {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      name
+      middleName
+      lastName
+      secondSurname
+      email
+      identificationType
+      identificationNumber
+      dateIssue
+      legalRepresentativeIdentificationType
+      legalRepresentativeIdentificationNumber
+      phoneCountryCode
+      phoneNumber
+      address
+      hasRural
+      confirmationCode
+      position
+      status
+      phoneVerification
+      emailVerification
+      type
+      userRoles {
+        id
+        createdAt
+        updatedAt
+        deletedAt
+        name
+        description
+        defaultForType
+        users {
+          id
+          createdAt
+          updatedAt
+          deletedAt
+          name
+          middleName
+          lastName
+          secondSurname
+          email
+          identificationType
+          identificationNumber
+          dateIssue
+          legalRepresentativeIdentificationType
+          legalRepresentativeIdentificationNumber
+          phoneCountryCode
+          phoneNumber
+          address
+          hasRural
+          confirmationCode
+          position
+          status
+          phoneVerification
+          emailVerification
+          type
+          fullName
+        }
+        roleFx {
+          id
+          createdAt
+          updatedAt
+          deletedAt
+          permission
+        }
+      }
+      userRolesFx {
+        id
+        createdAt
+        updatedAt
+        deletedAt
+        permission
+        role {
+          id
+          createdAt
+          updatedAt
+          deletedAt
+          name
+          description
+          defaultForType
+        }
+      }
+      fullName
+    }
+  }
+  visitsCount(orderBy: $orderBy, where: $where, pagination: $pagination) {
+    totalItems
+    itemsPerPage
+    totalPages
+    currentPage
+  }
+}
+
+query VisitTypes($orderBy: [FindVisitTypeOrderBy!], $where: FindVisitTypeWhere, $pagination: Pagination) {
+  visitTypes(orderBy: $orderBy, where: $where, pagination: $pagination) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    description
+    status
+  }
+  visitTypesCount(orderBy: $orderBy, where: $where, pagination: $pagination) {
+    currentPage
+    itemsPerPage
+    totalItems
+    totalPages
+  }
+}
+
+mutation CreateVisitType($createInput: CreateVisitTypeInput!) {
+  createVisitType(createInput: $createInput) {
+    id
+  }
+}
+query Visit($visitId: ID!) {
+  visit(id: $visitId) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    description
+    location
+    dateVisit
+    status
+    isProyect
+    longitude
+    latitude
+    client {
+      id
+      updatedAt
+      deletedAt
+      name
+      numberDocument
+      email
+      telefono
+      address
+      type
+      vertical
+      celular
+      createdAt
+    }
+    type {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      name
+      description
+      status
+    }
+  }
+}
+mutation UpdateVisitType($updateInput: UpdateVisitTypeInput!) {
+  updateVisitType(updateInput: $updateInput) {
+    id
+  }
+}
+mutation RemoveVisitType($removeVisitTypeId: ID!) {
+  removeVisitType(id: $removeVisitTypeId) {
+    id
+  }
+}
+
+mutation UpdateVisit($updateInput: UpdateVisitInput!) {
+  updateVisit(updateInput: $updateInput) {
+    id
+  }
+}
+
+mutation AcceptOrDeclineVisit($updateStatusInput: UpdateStatusInput!) {
+  acceptOrDeclineVisit(UpdateStatusInput: $updateStatusInput)
+}
+
+mutation CreateVisitComent($createInput: CreateVisitComentInput!) {
+  createVisitComent(createInput: $createInput) {
+    id
+  }
+}
+mutation CreateVisit($createInput: CreateVisitInput!) {
+  createVisit(createInput: $createInput) {
+    id
+  }
+}

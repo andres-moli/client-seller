@@ -1,0 +1,70 @@
+query Tasks($orderBy: [FindTaskTypeOrderBy!], $where: FindTaskTypeWhere, $pagination: Pagination) {
+  tasks(orderBy: $orderBy, where: $where, pagination: $pagination) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    taskName
+    taskDescription
+    taskDateExpiration
+    taskPriority
+    taskStatus
+    worker {
+      email
+      identificationType
+      identificationNumber
+      fullName
+    }
+    createdByUser {
+      email
+      identificationType
+      identificationNumber
+      fullName
+    }
+    taskComment {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      taskDescription
+      taskStatus
+      createdByUser {
+        email
+        identificationType
+        identificationNumber
+        fullName
+      }
+      file {
+        id
+        createdAt
+        updatedAt
+        deletedAt
+        fileName
+        fileExtension
+        fileMode
+        fileMongoId
+        url
+      }
+    }
+  }
+}
+mutation CreateTask($createInput: CreateTaskInput!) {
+  createTask(createInput: $createInput) {
+    id
+  }
+}
+mutation UpdateTask($updateInput: UpdateTaskInput!) {
+  updateTask(updateInput: $updateInput) {
+    id
+  }
+}
+mutation CreateTaskComment($createInput: CreateTaskCommentInput!) {
+  createTaskComment(createInput: $createInput) {
+    id
+  }
+}
+mutation UpdateTaskComment($updateInput: UpdateTaskCoomentInput!) {
+  updateTaskComment(updateInput: $updateInput) {
+    id
+  }
+}

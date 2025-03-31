@@ -1,0 +1,80 @@
+query FindAllFacturaCliente($input: FacturaPorClienteDto!) {
+  findAllFacturaCliente(input: $input) {
+    numberDocument
+    description
+    valueFlete
+    oip
+    backComision
+    numberGuia
+    carrier
+    carrierCell
+    contactClient
+    TEM_CEDULA
+    TEM_NOMCLI
+    TEM_FECHA
+    TEM_TIPMOV
+    TEM_PREFIJ
+    TEM_NUMDOC
+    TEM_VENDED
+    TEM_VENTA
+    TEM_VALCOS
+    TEM_UTILIDAD
+    TEM_PORCENTAJE_UTILIDAD
+    CL_DEPART
+    CLI_CIUDAD
+  }
+}
+query FindOneFacturaClienteByCode($code: String!) {
+  findOneFacturaClienteByCode(code: $code) {
+    isFound
+    flete {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      numberDocument
+      description
+      valueFlete
+      oip
+      backComision
+      numberGuia
+      carrier
+      carrierCell
+      contactClient
+    }
+  }
+}
+mutation CreateFletes($createInput: CreateFletesInput!) {
+  createFletes(createInput: $createInput) {
+    id
+  }
+}
+mutation UpdateFletes($updateInput: UpdateFletesInput!) {
+  updateFletes(updateInput: $updateInput) {
+    id
+  }
+}
+
+query FindUtilidadReal($input: findUtilidadRealInput!) {
+  findUtilidadReal(input: $input) {
+    trabajadores {
+      number_document
+      nombre
+      venta
+      costo
+      flete
+      comision
+      oip
+      utilidadReal
+      utilidadPorcentaje
+      utilidad
+      porcentaje
+      totalVendido
+      presupuesto
+    }
+    grupo {
+      utilidad
+      utilidad_porcentaje
+    }
+  }
+}

@@ -1,0 +1,39 @@
+query Departments {
+  departments {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    code
+    name
+  }
+}
+
+query Cities($departmentId: ID) {
+  cities(departmentId: $departmentId) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    code
+    name
+    department {
+      code
+      createdAt
+      deletedAt
+      id
+      name
+      updatedAt
+    }
+  }
+}
+
+mutation ResetPassword($password: String!) {
+  resetPassword(password: $password) {
+    email
+  }
+}
+
+query sendEmailRecovryPassword($email: String!) {
+  sendEmailRecovryPassword(email: $email)
+}

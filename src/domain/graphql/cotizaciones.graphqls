@@ -1,0 +1,79 @@
+query Cotizaciones($orderBy: [FindCotizacionOrderBy!], $where: FindCotizacionWhere, $pagination: Pagination) {
+  cotizaciones(orderBy: $orderBy, where: $where, pagination: $pagination) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    numeroCotizacion
+    fecha
+    nombreCliente
+    nombreVendedor
+    vendedor
+    ciudadCliente
+    emailCliente
+    nitCliente
+    valor
+  }
+  cotizacionesCount(orderBy: $orderBy, where: $where, pagination: $pagination) {
+    totalItems
+    itemsPerPage
+    totalPages
+    currentPage
+  }
+}
+query findSeachCotizacion($cotizacionSeachInput: CotizacionSeachInput!) {
+  findSeachCotizacion(cotizacionSeachInput: $cotizacionSeachInput)
+}
+query Cotizacion($cotizacionId: ID!) {
+  cotizacion(id: $cotizacionId) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    numeroCotizacion
+    fecha
+    nombreCliente
+    nombreVendedor
+    vendedor
+    ciudadCliente
+    emailCliente
+    nitCliente
+    valor
+    descripcion
+    status
+    proyecto {
+      name
+      status
+      description
+      value
+      id
+    }
+    detalle {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      referencia
+      descripcion
+      unidadMedida
+      cantidad
+      valorCosto
+      valorVenta
+      total
+      uuid
+    }
+  }
+}
+mutation SaveDetalleCotizacion($saveDetalleCotizacionId: String!) {
+  saveDetalleCotizacion(id: $saveDetalleCotizacionId)
+}
+mutation UpdateCotizacion($updateInput: UpdateCotizacionInput!) {
+  updateCotizacion(updateInput: $updateInput) {
+    id
+  }
+}
+mutation UpdateDetalleCotizacion($updateInput: UpdateCotizacionDetalleInput!) {
+  updateDetalleCotizacion(updateInput: $updateInput) {
+    id
+  }
+}

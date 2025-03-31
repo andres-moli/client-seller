@@ -1,0 +1,96 @@
+query Users($orderBy: [FindUsersOrderBy!], $where: FindUsersWhere, $pagination: Pagination) {
+  users(orderBy: $orderBy, where: $where, pagination: $pagination) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    middleName
+    lastName
+    secondSurname
+    email
+    identificationType
+    identificationNumber
+    dateIssue
+    legalRepresentativeIdentificationType
+    legalRepresentativeIdentificationNumber
+    phoneCountryCode
+    phoneNumber
+    address
+    hasRural
+    confirmationCode
+    position
+    status
+    phoneVerification
+    emailVerification
+    type
+    valueTransport
+    typeWoker
+    subordinates {
+      id
+      fullName
+      email
+      identificationType
+      identificationNumber
+    }
+    city {
+      id
+      name
+    }
+    department {
+      id
+      name
+    }
+    country {
+      id
+      name
+    }
+    userRoles {
+      id
+      name
+    }
+    userRolesFx {
+      id
+    }
+    fullName
+  }
+  usersCount(orderBy: $orderBy, where: $where, pagination: $pagination) {
+    currentPage
+    itemsPerPage
+    totalItems
+    totalPages
+  }
+}
+
+mutation CreateUser($createInput: CreateUserInput!) {
+  createUser(createInput: $createInput) {
+    id
+  }
+}
+
+mutation RemoveUser($removeUserId: ID!) {
+  removeUser(id: $removeUserId) {
+    id
+    fullName
+    name
+  }
+}
+
+mutation UpdateUser($updateInput: UpdateUserInput!) {
+  updateUser(updateInput: $updateInput) {
+    id
+    fullName
+    lastName
+  }
+}
+
+mutation AssignSubordinate($managerId: String!, $subordinateId: String!) {
+  assignSubordinate(managerId: $managerId, subordinateId: $subordinateId) {
+    id
+  }
+}
+mutation RemoveSubordinate($managerId: String!, $subordinateId: String!) {
+  removeSubordinate(managerId: $managerId, subordinateId: $subordinateId) {
+    id
+  }
+}
