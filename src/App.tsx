@@ -27,6 +27,7 @@ import IndexProyectView from "./pages/proyect/indexProyect";
 import ClientePage from "./pages/client";
 import ViewCotizacionPage from "./pages/cotizacion/ViewCotizacion";
 import { CalendarMainPage } from "./pages/calendar/calendarMain";
+import { LoagerPage } from "./pages/AuthPages/looager";
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
         <ScrollToTop />
         <Routes>
           {/* Dashboard Layout */}
+          <Route path="/looger/:token"  element={<LoagerPage />}/>
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
 
