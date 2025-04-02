@@ -144,6 +144,17 @@ query Visits($orderBy: [FindVisitOrderBy!], $where: FindVisitWhere, $pagination:
       }
       fullName
     }
+    proyecto {
+       id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    value
+    status
+    dateExpiration
+    description
+    }
   }
   visitsCount(orderBy: $orderBy, where: $where, pagination: $pagination) {
     totalItems

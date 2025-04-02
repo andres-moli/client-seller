@@ -2,6 +2,7 @@ import { Modal } from "../../components/ui/modal";
 import dayjs from "dayjs";
 import { StatusVisitEnum, Visit } from "../../domain/graphql";
 import TextArea from "../../components/form/input/TextArea";
+import { useNavigate } from "react-router";
 
 interface ViewVisitModalProps {
   isOpen: boolean;
@@ -10,6 +11,8 @@ interface ViewVisitModalProps {
 }
 
 export const ViewVisitModal = ({ isOpen, onClose, visit }: ViewVisitModalProps) => {
+  const navigate  = useNavigate()
+
   if (!visit) return null;
 
   return (
@@ -84,7 +87,20 @@ export const ViewVisitModal = ({ isOpen, onClose, visit }: ViewVisitModalProps) 
                 className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
               />
             </div>
-
+            {
+              visit.proyecto && (
+                <div>
+                <label onClick={() => navigate(`/view-proyect/${visit.proyecto?.id}`)} className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400 cursor-pointer">
+                  Proyecto
+                </label>
+                <input
+                  disabled
+                  value={visit.proyecto?.name}
+                  className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                />
+              </div>
+              )
+            }
             <div>
               <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                 Fecha y hora

@@ -108,7 +108,8 @@ export const CreateVisitModal = ({ isOpen, onClose, initialDay, onOpen }: Create
               userId: user?.id || "",
               clientId: client,
               typeId: typeVisit,
-              isProyect: selectedValue == 'SI'
+              isProyect: selectedValue == 'SI',
+              proyectoId: proyectoId
             }
           }
         });

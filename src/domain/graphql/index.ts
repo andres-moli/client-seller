@@ -319,6 +319,14 @@ export type CreatePositionInput = {
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type CreatePresupuestoInput = {
+  ano: Scalars['Float']['input'];
+  description: Scalars['String']['input'];
+  mes: Scalars['Float']['input'];
+  valor: Scalars['Float']['input'];
+  workerId: Scalars['String']['input'];
+};
+
 export type CreateProfileInput = {
   city: Scalars['Int']['input'];
   description: Scalars['String']['input'];
@@ -447,6 +455,7 @@ export type CreateVisitInput = {
   latitude?: InputMaybe<Scalars['String']['input']>;
   location?: InputMaybe<Scalars['String']['input']>;
   longitude?: InputMaybe<Scalars['String']['input']>;
+  proyectoId?: InputMaybe<Scalars['String']['input']>;
   status: StatusVisitEnum;
   typeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -707,6 +716,19 @@ export type FindFletesWhere = {
   status?: InputMaybe<StringFilter>;
 };
 
+export type FindPresupuestoOrderBy = {
+  createdAt?: InputMaybe<OrderTypes>;
+};
+
+export type FindPresupuestoWhere = {
+  _and?: InputMaybe<Array<FindPresupuestoWhere>>;
+  _or?: InputMaybe<Array<FindPresupuestoWhere>>;
+  ano?: InputMaybe<NumberFilter>;
+  description?: InputMaybe<StringFilter>;
+  mes?: InputMaybe<NumberFilter>;
+  worker?: InputMaybe<StringFilter>;
+};
+
 export type FindProyectCommentTypeOrderBy = {
   createdAt?: InputMaybe<OrderTypes>;
 };
@@ -960,6 +982,7 @@ export type Mutation = {
   createPageLinkInput: PageLink;
   createParameter: Parameter;
   createPositionInput: Position;
+  createPresupuesto: Presupuesto;
   createProfile: Profile;
   createProyectComment: ProyectComment;
   createProyecto: Proyectos;
@@ -993,6 +1016,7 @@ export type Mutation = {
   removePageLink: PageLink;
   removeParameter: Parameter;
   removePosition: Position;
+  removePresupuesto: Presupuesto;
   removeProfile: Profile;
   removeProyectComment: ProyectComment;
   removeProyecto: Proyectos;
@@ -1036,6 +1060,7 @@ export type Mutation = {
   updateParameter: Parameter;
   updatePassword: User;
   updatePositionInput: Position;
+  updatePresupuesto: Presupuesto;
   updateProfile: Profile;
   updateProyectComment: ProyectComment;
   updateProyecto: Proyectos;
@@ -1157,6 +1182,11 @@ export type MutationCreateParameterArgs = {
 
 export type MutationCreatePositionInputArgs = {
   createInput: CreatePositionInput;
+};
+
+
+export type MutationCreatePresupuestoArgs = {
+  createInput: CreatePresupuestoInput;
 };
 
 
@@ -1316,6 +1346,11 @@ export type MutationRemoveParameterArgs = {
 
 
 export type MutationRemovePositionArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRemovePresupuestoArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1531,6 +1566,11 @@ export type MutationUpdatePositionInputArgs = {
 };
 
 
+export type MutationUpdatePresupuestoArgs = {
+  updateInput: UpdatePresupuestoInput;
+};
+
+
 export type MutationUpdateProfileArgs = {
   updateInput: UpdateProfileInput;
 };
@@ -1732,6 +1772,19 @@ export type Position = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type Presupuesto = {
+  __typename?: 'Presupuesto';
+  ano: Scalars['Float']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  mes: Scalars['Float']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  valor: Scalars['Float']['output'];
+  worker: User;
+};
+
 export type Profile = {
   __typename?: 'Profile';
   city: Scalars['Int']['output'];
@@ -1883,6 +1936,9 @@ export type Query = {
   position: Position;
   positions: Array<Position>;
   positionsCount: MetadataPagination;
+  presupuesto: Presupuesto;
+  presupuestos: Array<Presupuesto>;
+  presupuestosCount: MetadataPagination;
   profile: Profile;
   profiles: Array<Profile>;
   profilesCount: MetadataPagination;
@@ -2286,6 +2342,25 @@ export type QueryPositionsArgs = {
 
 export type QueryPositionsCountArgs = {
   pagination?: InputMaybe<Pagination>;
+};
+
+
+export type QueryPresupuestoArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryPresupuestosArgs = {
+  orderBy?: InputMaybe<Array<FindPresupuestoOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindPresupuestoWhere>;
+};
+
+
+export type QueryPresupuestosCountArgs = {
+  orderBy?: InputMaybe<Array<FindPresupuestoOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindPresupuestoWhere>;
 };
 
 
@@ -2955,6 +3030,15 @@ export type UpdatePositionInput = {
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdatePresupuestoInput = {
+  ano?: InputMaybe<Scalars['Float']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  mes?: InputMaybe<Scalars['Float']['input']>;
+  valor?: InputMaybe<Scalars['Float']['input']>;
+  workerId?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type UpdateProfileInput = {
   city?: InputMaybe<Scalars['Int']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -3127,6 +3211,7 @@ export type UpdateVisitInput = {
   latitude?: InputMaybe<Scalars['String']['input']>;
   location?: InputMaybe<Scalars['String']['input']>;
   longitude?: InputMaybe<Scalars['String']['input']>;
+  proyectoId?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<StatusVisitEnum>;
   typeId?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['String']['input']>;
@@ -3247,6 +3332,7 @@ export type Visit = {
   latitude?: Maybe<Scalars['String']['output']>;
   location?: Maybe<Scalars['String']['output']>;
   longitude?: Maybe<Scalars['String']['output']>;
+  proyecto?: Maybe<Proyectos>;
   status: StatusVisitEnum;
   type: VisitType;
   updatedAt: Scalars['DateTime']['output'];
@@ -3780,7 +3866,7 @@ export type VisitsQueryVariables = Exact<{
 }>;
 
 
-export type VisitsQuery = { __typename?: 'Query', visits: Array<{ __typename?: 'Visit', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, description: string, location?: string | null, dateVisit: any, status: StatusVisitEnum, isProyect: boolean, latitude?: string | null, longitude?: string | null, client: { __typename?: 'Client', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name: string, numberDocument: string, email: string, telefono?: string | null, address?: string | null, type?: TypeClientEnum | null, vertical?: string | null, celular: string, city?: { __typename?: 'City', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, code: number, name: string } | null, department?: { __typename?: 'Department', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, code: number, name: string } | null, country?: { __typename?: 'Country', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, code: number, name: string } | null }, type: { __typename?: 'VisitType', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name: string, description: string, status: VisitTypeStatusEnum }, user: { __typename?: 'User', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name?: string | null, middleName?: string | null, lastName?: string | null, secondSurname?: string | null, email: string, identificationType?: UserDocumentTypes | null, identificationNumber?: string | null, dateIssue?: any | null, legalRepresentativeIdentificationType?: UserDocumentTypes | null, legalRepresentativeIdentificationNumber?: string | null, phoneCountryCode?: string | null, phoneNumber?: string | null, address?: string | null, hasRural?: boolean | null, confirmationCode?: string | null, position?: string | null, status: UserStatusTypes, phoneVerification: boolean, emailVerification: boolean, type: UserTypes, fullName: string, userRoles: Array<{ __typename?: 'Role', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name: string, description: string, defaultForType?: UserTypes | null, users?: Array<{ __typename?: 'User', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name?: string | null, middleName?: string | null, lastName?: string | null, secondSurname?: string | null, email: string, identificationType?: UserDocumentTypes | null, identificationNumber?: string | null, dateIssue?: any | null, legalRepresentativeIdentificationType?: UserDocumentTypes | null, legalRepresentativeIdentificationNumber?: string | null, phoneCountryCode?: string | null, phoneNumber?: string | null, address?: string | null, hasRural?: boolean | null, confirmationCode?: string | null, position?: string | null, status: UserStatusTypes, phoneVerification: boolean, emailVerification: boolean, type: UserTypes, fullName: string }> | null, roleFx: Array<{ __typename?: 'RoleFx', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, permission: string }> }>, userRolesFx: Array<{ __typename?: 'RoleFx', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, permission: string, role?: { __typename?: 'Role', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name: string, description: string, defaultForType?: UserTypes | null } | null }> } }>, visitsCount: { __typename?: 'MetadataPagination', totalItems?: number | null, itemsPerPage?: number | null, totalPages?: number | null, currentPage?: number | null } };
+export type VisitsQuery = { __typename?: 'Query', visits: Array<{ __typename?: 'Visit', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, description: string, location?: string | null, dateVisit: any, status: StatusVisitEnum, isProyect: boolean, latitude?: string | null, longitude?: string | null, client: { __typename?: 'Client', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name: string, numberDocument: string, email: string, telefono?: string | null, address?: string | null, type?: TypeClientEnum | null, vertical?: string | null, celular: string, city?: { __typename?: 'City', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, code: number, name: string } | null, department?: { __typename?: 'Department', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, code: number, name: string } | null, country?: { __typename?: 'Country', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, code: number, name: string } | null }, type: { __typename?: 'VisitType', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name: string, description: string, status: VisitTypeStatusEnum }, user: { __typename?: 'User', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name?: string | null, middleName?: string | null, lastName?: string | null, secondSurname?: string | null, email: string, identificationType?: UserDocumentTypes | null, identificationNumber?: string | null, dateIssue?: any | null, legalRepresentativeIdentificationType?: UserDocumentTypes | null, legalRepresentativeIdentificationNumber?: string | null, phoneCountryCode?: string | null, phoneNumber?: string | null, address?: string | null, hasRural?: boolean | null, confirmationCode?: string | null, position?: string | null, status: UserStatusTypes, phoneVerification: boolean, emailVerification: boolean, type: UserTypes, fullName: string, userRoles: Array<{ __typename?: 'Role', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name: string, description: string, defaultForType?: UserTypes | null, users?: Array<{ __typename?: 'User', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name?: string | null, middleName?: string | null, lastName?: string | null, secondSurname?: string | null, email: string, identificationType?: UserDocumentTypes | null, identificationNumber?: string | null, dateIssue?: any | null, legalRepresentativeIdentificationType?: UserDocumentTypes | null, legalRepresentativeIdentificationNumber?: string | null, phoneCountryCode?: string | null, phoneNumber?: string | null, address?: string | null, hasRural?: boolean | null, confirmationCode?: string | null, position?: string | null, status: UserStatusTypes, phoneVerification: boolean, emailVerification: boolean, type: UserTypes, fullName: string }> | null, roleFx: Array<{ __typename?: 'RoleFx', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, permission: string }> }>, userRolesFx: Array<{ __typename?: 'RoleFx', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, permission: string, role?: { __typename?: 'Role', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name: string, description: string, defaultForType?: UserTypes | null } | null }> }, proyecto?: { __typename?: 'Proyectos', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name: string, value: number, status: ProyectosStatusEnum, dateExpiration: any, description?: string | null } | null }>, visitsCount: { __typename?: 'MetadataPagination', totalItems?: number | null, itemsPerPage?: number | null, totalPages?: number | null, currentPage?: number | null } };
 
 export type VisitTypesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<FindVisitTypeOrderBy> | FindVisitTypeOrderBy>;
@@ -7439,6 +7525,17 @@ export const VisitsDocument = gql`
         }
       }
       fullName
+    }
+    proyecto {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      name
+      value
+      status
+      dateExpiration
+      description
     }
   }
   visitsCount(orderBy: $orderBy, where: $where, pagination: $pagination) {
