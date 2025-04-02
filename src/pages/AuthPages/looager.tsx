@@ -1,9 +1,12 @@
 import {useValidateUserTokenQuery } from "../../domain/graphql";
 import { useNavigate, useParams } from "react-router";
+import Cookies from 'js-cookie'
 
 export function LoagerPage() {
   const navigate  = useNavigate()
   const { token } = useParams()
+  Cookies.remove(import.meta.env.VITE_APP_KEY_COOKIE_SESSION)
+  Cookies.remove(import.meta.env.VITE_APP_KEY_COOKIE_USER)
   const { loading } = useValidateUserTokenQuery({
     variables: {
       validateTokenInput: {
