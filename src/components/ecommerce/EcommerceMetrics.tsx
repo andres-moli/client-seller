@@ -19,7 +19,7 @@ const iconMap: Record<string, JSX.Element> = {
 const navigationTo: Record<string, string | null> = {
   "cliente":  'client',
   "tareas": 'task',
-  "venta": null,
+  "venta": 'ventas',
   "proyectos": 'proyect'
 };
 export default function EcommerceMetrics() {

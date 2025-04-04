@@ -1,12 +1,23 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "../../icons";
+import { PresupuestoVsVenta, usePresupuestoVentaPorUsuarioQuery } from "../../domain/graphql";
+import { useUser } from "../../context/UserContext";
+import { formatCurrency } from "../../lib/utils";
+import dayjs from "dayjs";
+import { calcularDesempenoDiario } from "../../lib/porcentaMesActualAnterior";
 
 export default function MonthlyTarget() {
-  const series = [75.55];
+  const { user } = useUser()
+  const {data, loading} = usePresupuestoVentaPorUsuarioQuery({
+    variables: {
+      userId: user?.id || ''
+    }
+  })
+  const series = [data?.presupuestoVentaPorUsuario?.porcentajeCumplimiento || 0];
   const options: ApexOptions = {
     colors: ["#465FFF"],
     chart: {
@@ -16,6 +27,9 @@ export default function MonthlyTarget() {
       sparkline: {
         enabled: true,
       },
+      toolbar: {
+        show:true
+      }
     },
     plotOptions: {
       radialBar: {
@@ -56,6 +70,7 @@ export default function MonthlyTarget() {
   };
   const [isOpen, setIsOpen] = useState(false);
 
+
   function toggleDropdown() {
     setIsOpen(!isOpen);
   }
@@ -63,6 +78,7 @@ export default function MonthlyTarget() {
   function closeDropdown() {
     setIsOpen(false);
   }
+
   return (
     <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03]">
       <div className="px-5 pt-5 bg-white shadow-default rounded-2xl pb-11 dark:bg-gray-900 sm:px-6 sm:pt-6">
@@ -75,7 +91,7 @@ export default function MonthlyTarget() {
               Tu progreso mensual vas asi hasta ahora
             </p>
           </div>
-          <div className="relative inline-block">
+          {/* <div className="relative inline-block">
             <button className="dropdown-toggle" onClick={toggleDropdown}>
               <MoreDotIcon className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 size-6" />
             </button>
@@ -97,7 +113,7 @@ export default function MonthlyTarget() {
                 Delete
               </DropdownItem>
             </Dropdown>
-          </div>
+          </div> */}
         </div>
         <div className="relative ">
           <div className="max-h-[330px]" id="chartDarkStyle">
@@ -109,22 +125,29 @@ export default function MonthlyTarget() {
             />
           </div>
 
-          <span className="absolute left-1/2 top-full -translate-x-1/2 -translate-y-[95%] rounded-full bg-success-50 px-3 py-1 text-xs font-medium text-success-600 dark:bg-success-500/15 dark:text-success-500">
+          {/* <span className="absolute left-1/2 top-full -translate-x-1/2 -translate-y-[95%] rounded-full bg-success-50 px-3 py-1 text-xs font-medium text-success-600 dark:bg-success-500/15 dark:text-success-500">
             hoy +10%
-          </span>
+          </span> */}
         </div>
         <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
-          Hoy ganas $3287, es más que el mes pasado. ¡Sigue con tu buen trabajo!
+          {
+            loading ? 
+            <>Cargando...</> 
+            : 
+            <>
+            <TarjetaDesempeno data={data?.presupuestoVentaPorUsuario} />
+            </>
+          }
         </p>
       </div>
 
       <div className="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5">
         <div>
           <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
-            Target
+            Presupuesto
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
-            $20K
+            {formatCurrency(data?.presupuestoVentaPorUsuario?.presupuesto || 0)}
             <svg
               width="16"
               height="16"
@@ -146,10 +169,10 @@ export default function MonthlyTarget() {
 
         <div>
           <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
-            Revenue
+            Utilidad real
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
-            $20K
+          {formatCurrency(data?.presupuestoVentaPorUsuario?.utilidad || 0)}
             <svg
               width="16"
               height="16"
@@ -169,9 +192,9 @@ export default function MonthlyTarget() {
 
         <div className="w-px bg-gray-200 h-7 dark:bg-gray-800"></div>
 
-        <div>
+        {/* <div>
           <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
-            Today
+            Dolar hoy
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
             $20K
@@ -190,8 +213,29 @@ export default function MonthlyTarget() {
               />
             </svg>
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
+  );
+}
+function TarjetaDesempeno({ data }: { data: PresupuestoVsVenta | null | undefined }) {
+  const desempeno = calcularDesempenoDiario(data);
+  const colorStatus = {
+    mejor: 'bg-green-100 text-green-800',
+    peor: 'bg-red-100 text-red-800',
+    igual: 'bg-yellow-100 text-yellow-800'
+  };
+
+  return (
+  <div className="">
+    <div className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${colorStatus[desempeno.status]}`}>
+      {desempeno.status === 'mejor' ? '↑ Tus ventas este mes están mejorando' : 
+      desempeno.status === 'peor' ? '↓ Tus ventas este mes están disminuyendo' : 
+      '↔ Tus ventas este mes se mantienen estables'}
+    </div>
+    <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm mt-2">
+    comparado con el dia actual del mes pasado
+    </p>
+  </div>
   );
 }

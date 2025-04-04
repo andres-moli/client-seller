@@ -321,7 +321,7 @@ export type CreatePositionInput = {
 
 export type CreatePresupuestoInput = {
   ano: Scalars['Float']['input'];
-  description: Scalars['String']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
   mes: Scalars['Float']['input'];
   valor: Scalars['Float']['input'];
   workerId: Scalars['String']['input'];
@@ -662,6 +662,7 @@ export type FindCotizacionWhere = {
   _and?: InputMaybe<Array<FindCotizacionWhere>>;
   _or?: InputMaybe<Array<FindCotizacionWhere>>;
   fecha?: InputMaybe<DateFilter>;
+  nitCliente?: InputMaybe<StringFilter>;
   proyecto?: InputMaybe<StringFilter>;
   vendedor?: InputMaybe<StringFilter>;
 };
@@ -749,6 +750,8 @@ export type FindProyectoOrderBy = {
 export type FindProyectoWhere = {
   _and?: InputMaybe<Array<FindProyectoWhere>>;
   _or?: InputMaybe<Array<FindProyectoWhere>>;
+  clientFinal?: InputMaybe<StringFilter>;
+  clientIntegrador?: InputMaybe<StringFilter>;
   createdAt?: InputMaybe<DateFilter>;
   dateExpiration?: InputMaybe<DateFilter>;
   description?: InputMaybe<StringFilter>;
@@ -965,6 +968,7 @@ export type Mutation = {
   codeConfirmation: User;
   crearConcepto: ConceptoTable;
   create: RoleFx;
+  createAllPresupuestoToMonth: Scalars['Boolean']['output'];
   createClient: Client;
   createClientContact: ClientContact;
   createCotizacion: Cotizacion;
@@ -1785,6 +1789,18 @@ export type Presupuesto = {
   worker: User;
 };
 
+export type PresupuestoVsVenta = {
+  __typename?: 'PresupuestoVsVenta';
+  porcentajeCumplimiento: Scalars['Float']['output'];
+  porcentajeCumplimientoAnterior: Scalars['Float']['output'];
+  presupuesto: Scalars['Float']['output'];
+  presupuestoAnterior: Scalars['Float']['output'];
+  userId: Scalars['String']['output'];
+  utilidad: Scalars['Float']['output'];
+  venta: Scalars['Float']['output'];
+  ventaAnterior: Scalars['Float']['output'];
+};
+
 export type Profile = {
   __typename?: 'Profile';
   city: Scalars['Int']['output'];
@@ -1937,6 +1953,7 @@ export type Query = {
   positions: Array<Position>;
   positionsCount: MetadataPagination;
   presupuesto: Presupuesto;
+  presupuestoVentaPorUsuario?: Maybe<PresupuestoVsVenta>;
   presupuestos: Array<Presupuesto>;
   presupuestosCount: MetadataPagination;
   profile: Profile;
@@ -1969,6 +1986,7 @@ export type Query = {
   tipoProyecto: TipoProyecto;
   tipoProyectos: Array<TipoProyecto>;
   tipoProyectosCount: MetadataPagination;
+  todosPresupuestosVentas: Array<PresupuestoVsVenta>;
   user: User;
   users: Array<User>;
   usersCount: MetadataPagination;
@@ -2347,6 +2365,11 @@ export type QueryPositionsCountArgs = {
 
 export type QueryPresupuestoArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryPresupuestoVentaPorUsuarioArgs = {
+  userId: Scalars['String']['input'];
 };
 
 
@@ -3643,6 +3666,13 @@ export type SendEmailRecovryPasswordQueryVariables = Exact<{
 
 
 export type SendEmailRecovryPasswordQuery = { __typename?: 'Query', sendEmailRecovryPassword: string };
+
+export type PresupuestoVentaPorUsuarioQueryVariables = Exact<{
+  userId: Scalars['String']['input'];
+}>;
+
+
+export type PresupuestoVentaPorUsuarioQuery = { __typename?: 'Query', presupuestoVentaPorUsuario?: { __typename?: 'PresupuestoVsVenta', userId: string, presupuesto: number, venta: number, ventaAnterior: number, utilidad: number, porcentajeCumplimiento: number, porcentajeCumplimientoAnterior: number, presupuestoAnterior: number } | null };
 
 export type ParametersQueryVariables = Exact<{
   pagination?: InputMaybe<Pagination>;
@@ -5531,6 +5561,53 @@ export type SendEmailRecovryPasswordQueryHookResult = ReturnType<typeof useSendE
 export type SendEmailRecovryPasswordLazyQueryHookResult = ReturnType<typeof useSendEmailRecovryPasswordLazyQuery>;
 export type SendEmailRecovryPasswordSuspenseQueryHookResult = ReturnType<typeof useSendEmailRecovryPasswordSuspenseQuery>;
 export type SendEmailRecovryPasswordQueryResult = Apollo.QueryResult<SendEmailRecovryPasswordQuery, SendEmailRecovryPasswordQueryVariables>;
+export const PresupuestoVentaPorUsuarioDocument = gql`
+    query PresupuestoVentaPorUsuario($userId: String!) {
+  presupuestoVentaPorUsuario(userId: $userId) {
+    userId
+    presupuesto
+    venta
+    ventaAnterior
+    utilidad
+    porcentajeCumplimiento
+    porcentajeCumplimientoAnterior
+    presupuestoAnterior
+  }
+}
+    `;
+
+/**
+ * __usePresupuestoVentaPorUsuarioQuery__
+ *
+ * To run a query within a React component, call `usePresupuestoVentaPorUsuarioQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePresupuestoVentaPorUsuarioQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePresupuestoVentaPorUsuarioQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function usePresupuestoVentaPorUsuarioQuery(baseOptions: Apollo.QueryHookOptions<PresupuestoVentaPorUsuarioQuery, PresupuestoVentaPorUsuarioQueryVariables> & ({ variables: PresupuestoVentaPorUsuarioQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PresupuestoVentaPorUsuarioQuery, PresupuestoVentaPorUsuarioQueryVariables>(PresupuestoVentaPorUsuarioDocument, options);
+      }
+export function usePresupuestoVentaPorUsuarioLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PresupuestoVentaPorUsuarioQuery, PresupuestoVentaPorUsuarioQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PresupuestoVentaPorUsuarioQuery, PresupuestoVentaPorUsuarioQueryVariables>(PresupuestoVentaPorUsuarioDocument, options);
+        }
+export function usePresupuestoVentaPorUsuarioSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<PresupuestoVentaPorUsuarioQuery, PresupuestoVentaPorUsuarioQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<PresupuestoVentaPorUsuarioQuery, PresupuestoVentaPorUsuarioQueryVariables>(PresupuestoVentaPorUsuarioDocument, options);
+        }
+export type PresupuestoVentaPorUsuarioQueryHookResult = ReturnType<typeof usePresupuestoVentaPorUsuarioQuery>;
+export type PresupuestoVentaPorUsuarioLazyQueryHookResult = ReturnType<typeof usePresupuestoVentaPorUsuarioLazyQuery>;
+export type PresupuestoVentaPorUsuarioSuspenseQueryHookResult = ReturnType<typeof usePresupuestoVentaPorUsuarioSuspenseQuery>;
+export type PresupuestoVentaPorUsuarioQueryResult = Apollo.QueryResult<PresupuestoVentaPorUsuarioQuery, PresupuestoVentaPorUsuarioQueryVariables>;
 export const ParametersDocument = gql`
     query Parameters($pagination: Pagination) {
   parameters(pagination: $pagination) {

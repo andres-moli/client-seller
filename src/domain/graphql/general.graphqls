@@ -37,3 +37,15 @@ mutation ResetPassword($password: String!) {
 query sendEmailRecovryPassword($email: String!) {
   sendEmailRecovryPassword(email: $email)
 }
+query PresupuestoVentaPorUsuario($userId: String!) {
+  presupuestoVentaPorUsuario(userId: $userId) {
+    userId
+    presupuesto
+    venta
+    ventaAnterior
+    utilidad
+    porcentajeCumplimiento
+    porcentajeCumplimientoAnterior
+    presupuestoAnterior
+  }
+}

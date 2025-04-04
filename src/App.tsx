@@ -28,6 +28,8 @@ import ClientePage from "./pages/client";
 import ViewCotizacionPage from "./pages/cotizacion/ViewCotizacion";
 import { CalendarMainPage } from "./pages/calendar/calendarMain";
 import { LoagerPage } from "./pages/AuthPages/looager";
+import IndexClientView from "./pages/client/indexClient";
+import VentasPage from "./pages/ventas";
 
 export default function App() {
   return (
@@ -45,11 +47,13 @@ export default function App() {
             <Route path="/calendar" element={<CalendarMainPage />} />
             <Route path="/proyect" element={<ProyectPage />} />
             <Route path="/client" element={<ClientePage />} />
+            <Route path="/view-client/:id" element={<IndexClientView />} />
             <Route path="/create-proyect" element={<CreateProyecto />} />
             <Route path="/view-proyect/:id" element={<IndexProyectView />} />
             <Route path="/cotizacion" element={<CotizacionPage />} />
             <Route path="/view-cotizacion/:id" element={<ViewCotizacionPage />} />
             <Route path="/task" element={<TaskPage />} />
+            <Route path="/ventas" element={<VentasPage />} />
             <Route path="/blank" element={<Blank />} />
 
             {/* Forms */}
