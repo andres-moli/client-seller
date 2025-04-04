@@ -56,6 +56,7 @@ export default function ViewCliente({client}: {client: Client | undefined}) {
     departmentId: string;
     municipalityId: string;
   }) => {
+    values
   };
   if (!client) {
     return <Loader />;
