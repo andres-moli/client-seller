@@ -188,12 +188,25 @@ export default function VentaTable() {
   
           <div className="col-span-1">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Comisión total
+              Comisión individual total
             </label>
             <div className={`text-lg font-semibold`}>
               {formatCurrency(resultados?.totalComision || 0 )}
             </div>
           </div>
+          {
+          commissionResults?.find(comi => comi.user?.id == user?.id )?.externo
+          && (
+            <div className="col-span-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Comisión Total
+            </label>
+            <div className="text-lg font-semibold text-gray-900 dark:text-white">
+              {formatCurrency(commissionResults?.find(comi => comi.user?.id == user?.id )?.externo?.comision || 0)}
+            </div>
+          </div>
+          )
+          }
         </div>
         <div className="min-w-[1102px]">
           <Table>
