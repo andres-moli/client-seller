@@ -1791,14 +1791,23 @@ export type Presupuesto = {
 
 export type PresupuestoVsVenta = {
   __typename?: 'PresupuestoVsVenta';
-  porcentajeCumplimiento: Scalars['Float']['output'];
-  porcentajeCumplimientoAnterior: Scalars['Float']['output'];
-  presupuesto: Scalars['Float']['output'];
+  comparacionCumplimientoAcumulado: Scalars['String']['output'];
+  comparacionCumplimientoHoy: Scalars['String']['output'];
+  comparacionVentaAcumulada: Scalars['String']['output'];
+  comparacionVentaHoy: Scalars['String']['output'];
+  cumplimientoAcumuladoActual: Scalars['Float']['output'];
+  cumplimientoAcumuladoHastaHoy: Scalars['Float']['output'];
+  cumplimientoHoyActual: Scalars['Float']['output'];
+  diaActual: Scalars['Int']['output'];
+  presupuestoActual: Scalars['Float']['output'];
   presupuestoAnterior: Scalars['Float']['output'];
   userId: Scalars['String']['output'];
-  utilidad: Scalars['Float']['output'];
-  venta: Scalars['Float']['output'];
-  ventaAnterior: Scalars['Float']['output'];
+  ventaAcumuladaActual: Scalars['Float']['output'];
+  ventaAcumuladaAnterior: Scalars['Float']['output'];
+  ventaAcumuladaHastaHoy: Scalars['Float']['output'];
+  ventaAcumuladaHastaMismoDiaAnterior: Scalars['Float']['output'];
+  ventaHoyActual: Scalars['Float']['output'];
+  ventaMismoDiaAnterior: Scalars['Float']['output'];
 };
 
 export type Profile = {
@@ -3672,7 +3681,7 @@ export type PresupuestoVentaPorUsuarioQueryVariables = Exact<{
 }>;
 
 
-export type PresupuestoVentaPorUsuarioQuery = { __typename?: 'Query', presupuestoVentaPorUsuario?: { __typename?: 'PresupuestoVsVenta', userId: string, presupuesto: number, venta: number, ventaAnterior: number, utilidad: number, porcentajeCumplimiento: number, porcentajeCumplimientoAnterior: number, presupuestoAnterior: number } | null };
+export type PresupuestoVentaPorUsuarioQuery = { __typename?: 'Query', presupuestoVentaPorUsuario?: { __typename?: 'PresupuestoVsVenta', userId: string, presupuestoActual: number, presupuestoAnterior: number, ventaAcumuladaActual: number, ventaHoyActual: number, ventaAcumuladaHastaHoy: number, diaActual: number, ventaAcumuladaAnterior: number, ventaMismoDiaAnterior: number, ventaAcumuladaHastaMismoDiaAnterior: number, cumplimientoHoyActual: number, cumplimientoAcumuladoHastaHoy: number, cumplimientoAcumuladoActual: number, comparacionVentaHoy: string, comparacionVentaAcumulada: string, comparacionCumplimientoHoy: string, comparacionCumplimientoAcumulado: string } | null };
 
 export type ParametersQueryVariables = Exact<{
   pagination?: InputMaybe<Pagination>;
@@ -5565,13 +5574,22 @@ export const PresupuestoVentaPorUsuarioDocument = gql`
     query PresupuestoVentaPorUsuario($userId: String!) {
   presupuestoVentaPorUsuario(userId: $userId) {
     userId
-    presupuesto
-    venta
-    ventaAnterior
-    utilidad
-    porcentajeCumplimiento
-    porcentajeCumplimientoAnterior
+    presupuestoActual
     presupuestoAnterior
+    ventaAcumuladaActual
+    ventaHoyActual
+    ventaAcumuladaHastaHoy
+    diaActual
+    ventaAcumuladaAnterior
+    ventaMismoDiaAnterior
+    ventaAcumuladaHastaMismoDiaAnterior
+    cumplimientoHoyActual
+    cumplimientoAcumuladoHastaHoy
+    cumplimientoAcumuladoActual
+    comparacionVentaHoy
+    comparacionVentaAcumulada
+    comparacionCumplimientoHoy
+    comparacionCumplimientoAcumulado
   }
 }
     `;

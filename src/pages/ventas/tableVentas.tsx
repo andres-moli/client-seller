@@ -139,6 +139,32 @@ export default function VentaTable() {
               {formatCurrency(resultados?.totalVendido || 0)}
             </div>
           </div>
+          {
+            commissionResults?.find(comi => comi.user?.id == user?.id )?.externo
+            && (
+              <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Venta Grupo
+              </label>
+              <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                {formatCurrency(commissionResults?.find(comi => comi.user?.id == user?.id )?.externo?.totalVentasGrupo || 0)}
+              </div>
+            </div>
+            )
+          }
+                   {
+            commissionResults?.find(comi => comi.user?.id == user?.id )?.externo
+            && (
+              <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Utilidad Grupo
+              </label>
+              <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                {(commissionResults?.find(comi => comi.user?.id == user?.id )?.externo?.utilidadRealPorcentaje || 0).toFixed(2)}
+              </div>
+            </div>
+            )
+          }
           <div className="col-span-1">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Costo Total
@@ -263,31 +289,31 @@ export default function VentaTable() {
                       {dayjs(fac.fecha).format('YYYY-MM-DD')}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac.valorCosto)}
+                      {formatCurrency(fac?.valorCosto || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac.valorCostoReal)}
+                      {formatCurrency(fac?.valorCostoReal || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac.valorVenta)}
+                      {formatCurrency(fac?.valorVenta || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac.utilidadReal)}
+                      {formatCurrency(fac?.utilidadReal || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {(fac.utilidadRealPorcentaje)}
+                      {(fac?.utilidadRealPorcentaje)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac.valorFlete)}
+                      {formatCurrency(fac?.valorFlete || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac.valorOip)}
+                      {formatCurrency(fac?.valorOip || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac.valorBack)}
+                      {formatCurrency(fac?.valorBack || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac.comision)}
+                      {formatCurrency(fac?.comision || 0)}
                   </TableCell>
                 </TableRow>
               ))}

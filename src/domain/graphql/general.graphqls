@@ -40,12 +40,21 @@ query sendEmailRecovryPassword($email: String!) {
 query PresupuestoVentaPorUsuario($userId: String!) {
   presupuestoVentaPorUsuario(userId: $userId) {
     userId
-    presupuesto
-    venta
-    ventaAnterior
-    utilidad
-    porcentajeCumplimiento
-    porcentajeCumplimientoAnterior
+    presupuestoActual
     presupuestoAnterior
+    ventaAcumuladaActual
+    ventaHoyActual
+    ventaAcumuladaHastaHoy
+    diaActual
+    ventaAcumuladaAnterior
+    ventaMismoDiaAnterior
+    ventaAcumuladaHastaMismoDiaAnterior
+    cumplimientoHoyActual
+    cumplimientoAcumuladoHastaHoy
+    cumplimientoAcumuladoActual
+    comparacionVentaHoy
+    comparacionVentaAcumulada
+    comparacionCumplimientoHoy
+    comparacionCumplimientoAcumulado
   }
 }
