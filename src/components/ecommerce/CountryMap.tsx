@@ -1,5 +1,6 @@
 import { VectorMap } from "@react-jvectormap/core";
 import { coMerc } from "@react-jvectormap/colombia";
+import { useCallback } from "react";
 
 interface VentasPorVendedorDepartamento {
   vendedor: string;
@@ -15,8 +16,23 @@ interface VentasPorVendedorDepartamento {
 
 interface ColombiaMapProps {
   ventas: VentasPorVendedorDepartamento[];
+  onSelectedDeparamento: (departamento: string) => void;
 }
-
+/**
+ * Normaliza un texto para comparación o visualización consistente:
+ * - Convierte a mayúsculas
+ * - Elimina tildes y diacríticos
+ * - Elimina caracteres especiales (guiones, puntos, etc.)
+ * @param text Texto a normalizar
+ * @returns Texto normalizado
+ */
+const normalizeText = (text: string): string => {
+  return text
+    .toUpperCase()
+    .normalize("NFD") // Separa caracteres base de sus diacríticos
+    .replace(/[\u0300-\u036f]/g, "") // Elimina tildes y diacríticos
+    .replace(/[^A-Z0-9 ]/g, ""); // Elimina todo excepto letras, números y espacios
+};
 const departamentosColombia = [
   { nombre: "Amazonas", lat: -1.4429, lng: -71.5724 },
   { nombre: "Antioquia", lat: 6.2442, lng: -75.5812 },
@@ -52,7 +68,7 @@ const departamentosColombia = [
   { nombre: "Vichada", lat: 4.4235, lng: -69.2878 },
 ];
 
-const ColombiaMap: React.FC<ColombiaMapProps> = ({ ventas }) => {
+const ColombiaMap: React.FC<ColombiaMapProps> = ({ ventas, onSelectedDeparamento }) => {
   const normalizeName = (name: string) =>
     name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   
@@ -69,10 +85,16 @@ const ColombiaMap: React.FC<ColombiaMapProps> = ({ ventas }) => {
       return acc;
     }, {});
   };
-
+  const handleRegionClick = useCallback((event, code) => {
+    event
+    const regionName = coMerc.content.paths[code]?.name;
+    const name = normalizeText(regionName);
+    onSelectedDeparamento(name)
+  }, [onSelectedDeparamento]);
   return (
     <div className="w-full h-[500px]">
       <VectorMap
+        onRegionClick={handleRegionClick}
         map={coMerc}
         backgroundColor="transparent"
         zoomOnScroll={false}

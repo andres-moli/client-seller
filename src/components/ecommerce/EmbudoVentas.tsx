@@ -22,7 +22,7 @@ const EmbudoVentas: React.FC = () => {
     });
 
     if (loading) return (
-        <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03] mt-6 p-6">
+        <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03] mt-6 p-6 dark:text-gray-300">
             <div className="h-64 flex items-center justify-center">
                 Cargando datos del embudo...
             </div>
@@ -30,7 +30,7 @@ const EmbudoVentas: React.FC = () => {
     );
 
     if (error) return (
-        <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03] mt-6 p-6">
+        <div className="dark:text-gray-300 rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03] mt-6 p-6">
             <div className="h-64 flex items-center justify-center text-red-500">
                 Error: {error.message}
             </div>
@@ -58,7 +58,7 @@ const EmbudoVentas: React.FC = () => {
     return (
         <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03] mt-6 overflow-hidden">
             <div className="bg-white shadow-default rounded-2xl dark:bg-gray-900 p-6">
-                <h2 className="text-lg font-semibold mb-4">Embudo de Ventas</h2>
+                <h2 className="text-lg font-semibold mb-4 dark:text-gray-300">Embudo de Ventas</h2>
                 
                 {datosEmbudo.length > 0 ? (
                     <div className="h-[400px] w-full"> {/* Contenedor con altura fija */}

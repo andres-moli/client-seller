@@ -9,6 +9,7 @@ import PageMeta from "../../components/common/PageMeta";
 import { useUser } from "../../context/UserContext";
 import EmbudoVentas from "../../components/ecommerce/EmbudoVentas";
 import VentasDiariasChart from "../../components/ecommerce/ventasTrabajadorDiaras";
+import { Top20VentasClientes } from "../../components/ecommerce/Top20VentasClientes";
 
 export default function Home() {
   const { user } = useUser();
@@ -39,6 +40,9 @@ export default function Home() {
 
         <div className="col-span-12">
           <StatisticsChart  data={data?.ventasPorVendedor || []} loading={loading}/>
+        </div>
+        <div className="col-span-12">
+          <Top20VentasClientes />
         </div>
         <div className="col-span-12">
           <VentasDiariasChart />

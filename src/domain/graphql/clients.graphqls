@@ -135,3 +135,12 @@ query VisitComents($orderBy: [FindVisitComentOrderBy!], $where: FindVisitComentW
     }
   }
 }
+query GetVentasTop20Clientes($vendedor: String!) {
+  getVentasTop20Clientes(vendedor: $vendedor) {
+    vendedor
+    nit
+    nombreCliente
+    total
+    venta
+  }
+}

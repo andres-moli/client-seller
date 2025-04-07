@@ -17,7 +17,7 @@ const iconMap: Record<string, JSX.Element> = {
   "proyectos": <File className="text-gray-800 size-6 dark:text-white/90" />
 };
 const navigationTo: Record<string, string | null> = {
-  "cliente":  'client',
+  "cliente fomplus":  'client',
   "tareas": 'task',
   "venta": 'ventas',
   "proyectos": 'proyect'

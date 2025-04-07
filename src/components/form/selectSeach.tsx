@@ -60,7 +60,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
               filteredOptions.map((option) => (
                 <li
                   key={option.value}
-                  className="px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="px-4 py-2 text-sm cursor-pointer  dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                   onClick={() => handleSelect(option.value)}
                 >
                   {option.label}

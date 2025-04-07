@@ -56,6 +56,11 @@ export default function VentaTable() {
   const [fechaFin, setFechaFin] = useState(dayjs().endOf("month").format("YYYY-MM-DD"));
   const [commissionResults, setCommissionResults] = useState<UsuarioFacturas[]>([]);
 
+  // Optimización: Memoizar el resultado del find
+  const userCommissionData = commissionResults.find(comi => comi.user?.id === user?.id);
+  const resultados = userCommissionData?.totalizado;
+  const externoData = userCommissionData?.externo;
+
   const fetchComisiones = async () => {
     const toastid = toast.loading('Cargando ventas...');
     try {
@@ -98,8 +103,7 @@ export default function VentaTable() {
       fetchComisiones();
     }
   }, [fechaInicio, fechaFin]);
-    //@ts-ignore
-  const resultados = (commissionResults?.find(comi => comi.user?.id == user?.id )?.totalizado);
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
@@ -139,32 +143,26 @@ export default function VentaTable() {
               {formatCurrency(resultados?.totalVendido || 0)}
             </div>
           </div>
-          {
-            commissionResults?.find(comi => comi.user?.id == user?.id )?.externo
-            && (
+          {externoData && (
+            <>
               <div className="col-span-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Venta Grupo
-              </label>
-              <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                {formatCurrency(commissionResults?.find(comi => comi.user?.id == user?.id )?.externo?.totalVentasGrupo || 0)}
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Venta Grupo
+                </label>
+                <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {formatCurrency(externoData?.totalVentasGrupo || 0)}
+                </div>
               </div>
-            </div>
-            )
-          }
-                   {
-            commissionResults?.find(comi => comi.user?.id == user?.id )?.externo
-            && (
               <div className="col-span-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Utilidad Grupo
-              </label>
-              <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                {(commissionResults?.find(comi => comi.user?.id == user?.id )?.externo?.utilidadRealPorcentaje || 0).toFixed(2)}
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Utilidad Grupo
+                </label>
+                <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {(externoData?.utilidadRealPorcentaje || 0).toFixed(2)}
+                </div>
               </div>
-            </div>
-            )
-          }
+            </>
+          )}
           <div className="col-span-1">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Costo Total
@@ -190,23 +188,30 @@ export default function VentaTable() {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Comisión individual total
             </label>
-            <div className={`text-lg font-semibold`}>
+            <div className={`text-lg font-semibold dark:text-gray-300`}>
               {formatCurrency(resultados?.totalComision || 0 )}
             </div>
           </div>
-          {
-          commissionResults?.find(comi => comi.user?.id == user?.id )?.externo
-          && (
+          {(resultados?.totalRodamiento || 0) > 0 && (
             <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Comisión Total
-            </label>
-            <div className="text-lg font-semibold text-gray-900 dark:text-white">
-              {formatCurrency(commissionResults?.find(comi => comi.user?.id == user?.id )?.externo?.comision || 0)}
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Total Rodamiento
+              </label>
+              <div className="text-lg font-semibold text-gray-900 dark:text-gray-300">
+                {formatCurrency(resultados?.totalRodamiento || 0)}
+              </div>
             </div>
-          </div>
-          )
-          }
+          )}
+          {externoData && (
+            <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Comisión Total
+              </label>
+              <div className="text-lg font-semibold text-gray-900 dark:text-gray-300">
+                {formatCurrency(externoData?.comision || 0)}
+              </div>
+            </div>
+          )}
         </div>
         <div className="min-w-[1102px]">
           <Table>
@@ -290,47 +295,48 @@ export default function VentaTable() {
 
             {/* Table Body */}
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {commissionResults?.find(comi => comi.user?.id == user?.id )?.facturasValide.map((fac) => (
+              {userCommissionData?.facturasValide?.map((fac) => (
                 <TableRow key={fac.numeroFactura}>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {fac.clienteNombre}
+                    {fac.clienteNombre}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {fac.numeroFactura}
+                    {fac.numeroFactura}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {dayjs(fac.fecha).format('YYYY-MM-DD')}
+                    {dayjs(fac.fecha).format('YYYY-MM-DD')}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac?.valorCosto || 0)}
+                    {formatCurrency(fac?.valorCosto || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac?.valorCostoReal || 0)}
+                    {formatCurrency(fac?.valorCostoReal || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac?.valorVenta || 0)}
+                    {formatCurrency(fac?.valorVenta || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac?.utilidadReal || 0)}
+                    {formatCurrency(fac?.utilidadReal || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {(fac?.utilidadRealPorcentaje)}
+                    {(fac?.utilidadRealPorcentaje)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac?.valorFlete || 0)}
+                    {formatCurrency(fac?.valorFlete || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac?.valorOip || 0)}
+                    {formatCurrency(fac?.valorOip || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac?.valorBack || 0)}
+                    {formatCurrency(fac?.valorBack || 0)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      {formatCurrency(fac?.comision || 0)}
+                    {formatCurrency(fac?.comision || 0)}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
+
           </Table>
         </div>
       </div>

@@ -12,9 +12,10 @@ import {
   LucidePhoneOutgoing,
   PhoneIcon,
   MailIcon,
+  MapPinPlusIcon,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
-import { OrderTypes, ProyectComment, useClientContactsQuery, useClientQuery, useCotizacionesQuery, useCreateProyectCommentMutation, useProyectCommentsQuery, useProyectosQuery } from "../../domain/graphql";
+import { OrderTypes, ProyectComment, useClientContactsQuery, useClientQuery, useCotizacionesQuery, useCreateProyectCommentMutation, useProyectCommentsQuery, useProyectosQuery, useVisitsQuery } from "../../domain/graphql";
 import TextArea from "../../components/form/input/TextArea";
 import Swal from "sweetalert2";
 import { toast } from "sonner";
@@ -82,13 +83,12 @@ export default function IndexClientView() {
       icon: <FileText size={18} />,
       content: <CotizacionesTab nitClient={data?.client.numberDocument} loading={loading}/>
     },
-    // {
-    //   id: "documentos",
-    //   label: "Documentos",
-    //   icon: <File size={18} />,
-    //   // @ts-ignore
-    //   content: <DocumentosTab comments={data?.proyectComments || []} loading={loading} id={id}/>
-    // }
+    {
+      id: "visitas",
+      label: "Visitas",
+      icon: <MapPinPlusIcon size={18} />,
+      content: <Visitas key={id} id={id}/>
+    }
   ];
 
   return (
@@ -247,7 +247,141 @@ function Proyectos({id}: {id: string}) {
     </div>
   );
 }
+function Visitas({id}: {id: string}) {
+  const navigate  = useNavigate()
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Resetear a la primera página cuando cambia el tamaño
+  };
+  const {data, loading} = useVisitsQuery({
+    variables: {
+      where: {
+        client: {
+          _eq: id
+        }
+      },
+      orderBy: {
+        createdAt: OrderTypes.Desc
+      },
+      pagination: {
+        skip: (currentPage - 1) * itemsPerPage,
+        take: itemsPerPage
+      }
+    }
+  })
+  return (
+    <div>
+      <h3 className="mb-4 text-lg font-medium text-gray-800 dark:text-white">
+        Visitas del cliente
+      </h3>
+      <div className="space-y-4">
+      <Table>
+            {/* Table Header */}
+            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+            <TableRow>
+                <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                Trabajador
+                </TableCell>
+                <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                Fecha
+                </TableCell>
+                <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                Estado
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                  Descripción
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                  Proyecto
+                </TableCell>
+                {/* <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                  Accion
+                </TableCell> */}
+            </TableRow>
+            </TableHeader>
+
+            {/* Table Body */}
+            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+            {data?.visits.map((visit) => (
+              <TableRow key={visit.id}>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    {visit.user.fullName}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    {dayjs(visit.dateVisit).format('YYYY-MM-DD HH:mm:ss')}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    {visit.status}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {visit.description}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  <div className="relative inline-block group">
+                    {visit.isProyect ? 'SI' : 'NO'}
+                    {visit.isProyect && visit.proyecto?.name && (
+                      <span className="
+                        absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2
+                        px-2 py-1 text-xs text-white bg-gray-800 rounded
+                        opacity-0 group-hover:opacity-100 transition-opacity
+                        whitespace-nowrap z-10
+                      ">
+                        {visit.proyecto?.name}
+                        <span className="
+                          absolute top-full left-1/2 -translate-x-1/2
+                          border-4 border-transparent border-t-gray-800
+                        "></span>
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
+                {/* <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  <Eye 
+                    className="cursor-pointer"
+                    onClick={() => navigate(`/view-proyect/${proyect.id}`)}
+                  />
+                </TableCell> */}
+              </TableRow>
+            ))}
+            </TableBody>
+        </Table>
+        <Pagination
+          totalItems={data?.visitsCount.totalItems || 0}
+          itemsPerPage={data?.visitsCount.itemsPerPage || 0}
+          totalPages={Math.ceil((data?.visitsCount.totalItems || 0) / (data?.visitsCount?.itemsPerPage || 0))}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+          onItemsPerPageChange={handleItemsPerPageChange}
+          className="mt-6"
+        />
+      </div>
+    </div>
+  );
+}
 function CotizacionesTab({nitClient, loading}: { nitClient: string | undefined, loading: boolean}) {
   const navigate  = useNavigate()
   const [itemsPerPage, setItemsPerPage] = useState(10);

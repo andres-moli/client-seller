@@ -48,8 +48,8 @@ const AppLayout: React.FC = () => {
 
   if (loading)
     return (
-      <div className="h-screen w-screen flex justify-center items-center flex-col">
-        <img src="/loading.svg" alt="" />
+      <div className="h-screen w-screen flex justify-center items-center flex-col dark:text-gray-400">
+        <img src="/loading.svg" alt="" className="dark:text-gray-400"/>
         <span>Cargando recursos</span>
       </div>
     );

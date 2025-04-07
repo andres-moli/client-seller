@@ -1937,6 +1937,7 @@ export type Query = {
   findUtilidadReal: UtilidadRealModel;
   functionalities: FunctionalityModel;
   getDataDashboard: Array<DashboardDataModal>;
+  getVentasTop20Clientes: Array<VentasTrabajadorCliente>;
   group: Group;
   groups: Array<Group>;
   groupsCount: MetadataPagination;
@@ -2249,6 +2250,11 @@ export type QueryFindUtilidadRealArgs = {
 
 export type QueryGetDataDashboardArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type QueryGetVentasTop20ClientesArgs = {
+  vendedor: Scalars['String']['input'];
 };
 
 
@@ -3347,6 +3353,15 @@ export type VentasPorVendedorDepartamento = {
   venta: Scalars['Float']['output'];
 };
 
+export type VentasTrabajadorCliente = {
+  __typename?: 'VentasTrabajadorCliente';
+  nit?: Maybe<Scalars['String']['output']>;
+  nombreCliente?: Maybe<Scalars['String']['output']>;
+  total?: Maybe<Scalars['Float']['output']>;
+  vendedor?: Maybe<Scalars['String']['output']>;
+  venta?: Maybe<Scalars['Float']['output']>;
+};
+
 export enum VerificationTypes {
   Email = 'Email',
   Phone = 'Phone'
@@ -3530,6 +3545,13 @@ export type VisitComentsQueryVariables = Exact<{
 
 
 export type VisitComentsQuery = { __typename?: 'Query', visitComents: Array<{ __typename?: 'VisitComent', status?: VisitComentStatusEnum | null, type: VisitComentTypeEnum, id: string, description: string, createdAt: any, date?: any | null, user: { __typename?: 'User', name?: string | null }, visit: { __typename?: 'Visit', id: string, client: { __typename?: 'Client', name: string } } }> };
+
+export type GetVentasTop20ClientesQueryVariables = Exact<{
+  vendedor: Scalars['String']['input'];
+}>;
+
+
+export type GetVentasTop20ClientesQuery = { __typename?: 'Query', getVentasTop20Clientes: Array<{ __typename?: 'VentasTrabajadorCliente', vendedor?: string | null, nit?: string | null, nombreCliente?: string | null, total?: number | null, venta?: number | null }> };
 
 export type ClientContactsQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<FindClientContactOrderBy> | FindClientContactOrderBy>;
@@ -4646,6 +4668,50 @@ export type VisitComentsQueryHookResult = ReturnType<typeof useVisitComentsQuery
 export type VisitComentsLazyQueryHookResult = ReturnType<typeof useVisitComentsLazyQuery>;
 export type VisitComentsSuspenseQueryHookResult = ReturnType<typeof useVisitComentsSuspenseQuery>;
 export type VisitComentsQueryResult = Apollo.QueryResult<VisitComentsQuery, VisitComentsQueryVariables>;
+export const GetVentasTop20ClientesDocument = gql`
+    query GetVentasTop20Clientes($vendedor: String!) {
+  getVentasTop20Clientes(vendedor: $vendedor) {
+    vendedor
+    nit
+    nombreCliente
+    total
+    venta
+  }
+}
+    `;
+
+/**
+ * __useGetVentasTop20ClientesQuery__
+ *
+ * To run a query within a React component, call `useGetVentasTop20ClientesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetVentasTop20ClientesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetVentasTop20ClientesQuery({
+ *   variables: {
+ *      vendedor: // value for 'vendedor'
+ *   },
+ * });
+ */
+export function useGetVentasTop20ClientesQuery(baseOptions: Apollo.QueryHookOptions<GetVentasTop20ClientesQuery, GetVentasTop20ClientesQueryVariables> & ({ variables: GetVentasTop20ClientesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetVentasTop20ClientesQuery, GetVentasTop20ClientesQueryVariables>(GetVentasTop20ClientesDocument, options);
+      }
+export function useGetVentasTop20ClientesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetVentasTop20ClientesQuery, GetVentasTop20ClientesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetVentasTop20ClientesQuery, GetVentasTop20ClientesQueryVariables>(GetVentasTop20ClientesDocument, options);
+        }
+export function useGetVentasTop20ClientesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetVentasTop20ClientesQuery, GetVentasTop20ClientesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetVentasTop20ClientesQuery, GetVentasTop20ClientesQueryVariables>(GetVentasTop20ClientesDocument, options);
+        }
+export type GetVentasTop20ClientesQueryHookResult = ReturnType<typeof useGetVentasTop20ClientesQuery>;
+export type GetVentasTop20ClientesLazyQueryHookResult = ReturnType<typeof useGetVentasTop20ClientesLazyQuery>;
+export type GetVentasTop20ClientesSuspenseQueryHookResult = ReturnType<typeof useGetVentasTop20ClientesSuspenseQuery>;
+export type GetVentasTop20ClientesQueryResult = Apollo.QueryResult<GetVentasTop20ClientesQuery, GetVentasTop20ClientesQueryVariables>;
 export const ClientContactsDocument = gql`
     query ClientContacts($orderBy: [FindClientContactOrderBy!], $pagination: Pagination, $where: FindClientContactWhere) {
   clientContacts(orderBy: $orderBy, pagination: $pagination, where: $where) {

@@ -189,6 +189,7 @@ const VentasDiariasChart = () => {
             <Select
               onChange={(e) => setMes(+e)}
               options={monthOptions}
+              placeholder='Selecione un mes'
             />
             <Button 
               onClick={fetchData} 
