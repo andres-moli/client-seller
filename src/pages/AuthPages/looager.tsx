@@ -5,16 +5,17 @@ import Cookies from 'js-cookie'
 export function LoagerPage() {
   const navigate  = useNavigate()
   const { token } = useParams()
-  Cookies.remove(import.meta.env.VITE_APP_KEY_COOKIE_SESSION)
-  Cookies.remove(import.meta.env.VITE_APP_KEY_COOKIE_USER)
+
   const { loading } = useValidateUserTokenQuery({
     variables: {
       validateTokenInput: {
         token: token ?? "",
       },
     },
-    onCompleted: () => {
+    onCompleted: (data) => {
       navigate("/")
+      Cookies.set(import.meta.env.VITE_APP_KEY_COOKIE_SESSION, token || '')
+      Cookies.set(import.meta.env.VITE_APP_KEY_COOKIE_USER, JSON.stringify(data.validateUserToken))
     },
     onError: (error) => {
       console.log("error", error);
