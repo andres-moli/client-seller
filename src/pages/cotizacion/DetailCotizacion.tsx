@@ -1,13 +1,17 @@
 import dayjs from "dayjs"
-import { CotizacionStatusEnum, DetalleCotizacion, useCotizacionQuery, useProyectosQuery, useSaveDetalleCotizacionMutation, useUpdateCotizacionMutation, useUpdateDetalleCotizacionMutation } from "../../domain/graphql"
+import { CotizacionStatusEnum, DetalleCotizacion, TaskPrioridad, TaskStatus, useCotizacionQuery, useCreateTaskMutation, useProyectosQuery, useSaveDetalleCotizacionMutation, useUpdateCotizacionMutation, useUpdateDetalleCotizacionMutation } from "../../domain/graphql"
 import SearchableSelect, { Option } from "../../components/form/selectSeach"
 import { useEffect, useState } from "react"
 import { ButtonTable, Table, TableBody, TableCell, TableHeader, TableRow } from "../../components/ui/table"
 import { formatCurrency, ToastyErrorGraph } from "../../lib/utils"
-import { Trash2 } from "lucide-react"
+import { Trash2, User } from "lucide-react"
 import { toast } from "sonner"
 import Swal from "sweetalert2"
 import TextArea from "../../components/form/input/TextArea"
+import { CreateTaskByDateModal } from "../task/createModalTaskByDate"
+import { useModal } from "../../hooks/useModal"
+import { useUser } from "../../context/UserContext"
+import { apolloClient } from "../../main.config"
 interface ResultadosCalculo {
   subtotalCosto: number;
   subtotalVenta: number;
@@ -83,12 +87,19 @@ const calcularPorcentajeUtilidad = (costo: number, venta: number): number => {
 export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id }) => {
     const [status, setStatus] = useState<string>()
     const [proyectoId, setProyectoId] = useState<string>()
+    const [titleTask, setTitleTask] = useState('');
     const [description, setDescription] = useState<string>("")
     const [editingField, setEditingField] = useState<EditableField | null>(null)
+    const [dueDateTask, setDueDateTask] = useState(dayjs().format("YYYY-MM-DD"));
+    const [priority, setPriority] = useState<TaskPrioridad>(TaskPrioridad.Media);
+    const [shwonDate,setShowDate] = useState(false);
     const [saveDetail] = useSaveDetalleCotizacionMutation()
     const [updateCotizacion] = useUpdateCotizacionMutation()
     const [updateDetalle] = useUpdateDetalleCotizacionMutation()
-
+    const [createTask] = useCreateTaskMutation()
+    
+    const {isOpen: isOpenTask, closeModal: closeModalTask, openModal: openModalTask} = useModal()
+    const { user } = useUser()
     const {data, loading, refetch} = useCotizacionQuery({
         variables: {
             cotizacionId: id
@@ -98,6 +109,11 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
 
     const {data: dataProyecto, loading: loadingProyecto} = useProyectosQuery({
       variables: {
+        where: {
+          worker: {
+            _eq: user?.id || ''
+          }
+        },
         pagination: {
           skip: 0,
           take: 9999999
@@ -115,6 +131,7 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
     useEffect(() => {
       if (data?.cotizacion) {
         setDescription(data.cotizacion.descripcion || "")
+        setTitleTask(`seguimiento de la cotización con numero ${data.cotizacion.numeroCotizacion} ( ` + data.cotizacion.descripcion || '' + ' )')
       }
     }, [data?.cotizacion])
 
@@ -212,12 +229,48 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
     const dataCotizacion = data?.cotizacion
     //@ts-ignore
     const resultados = calcularTotalesYUtilidad(dataCotizacion?.detalle || []);
+    const handleCreateTask = async () => {
+      try {
+          const result = await Swal.fire({
+            title: "¿Estás seguro?",
+            text: "¿Deseas crear esta tarea?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Sí, crear",
+            cancelButtonText: "Cancelar",
+          });
+          if(result.dismiss){
+            return
+          }
+          if(result.isConfirmed) {      
+            const res = await createTask({
+                variables: {
+                  createInput: {
+                      taskDateExpiration: dueDateTask,
+                      taskName: titleTask,
+                      taskPriority: priority,
+                      taskStatus: TaskStatus.Creada,
+                      workerId: user?.id || '',
+                      cotizacionId: id
+                    }
+                }
+            })
+            if(res.errors){
+                toast.error('Hubo un error: ' + res.errors[0]);
+                return
+            }
+            apolloClient.cache.evict({ fieldName: "tasks" })
+            toast.success('Tarea Creada con exito')
+          }
+      } catch (err){
+          ToastyErrorGraph(err as any)
+      }
+    };
     return(
         <>
             <h3 className="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl text-center">
                 Información general de la cotización
             </h3>
-            
             {/* Campos de información general (se mantienen igual) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
               {/* Campo: Título de la tarea */}
@@ -350,8 +403,42 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
                   className="dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-base text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                 />
             </div>
-
-            <div className="mt-6">
+            <div className="flex flex-col md:flex-row md:items-center md:gap-4 w-full">
+                <div className="md:w-auto">
+                  <ButtonTable onClick={() => setShowDate((prev) => !prev)}>
+                    {shwonDate ? 'Ocultar fecha' : 'Crear Recordatorio'}
+                  </ButtonTable>
+                </div>
+                {
+                  shwonDate && (
+                    <>
+                    <div className="w-full md:w-64">
+                      <input
+                        id="event-start-date"
+                        type="datetime-local"
+                        value={dueDateTask}
+                        onChange={(e) => {
+                          setDueDateTask(e.target.value);
+                          e.target.blur(); // 👈 esto cierra el picker
+                          handleCreateTask();
+                        }}
+                        className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                      />
+                    </div>
+                    <div className="relative w-full">
+                      <input
+                        id="title"
+                        type="text"
+                        value={titleTask}
+                        onChange={(e) => setTitleTask(e.target.value)}
+                        className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                      />
+                    </div>
+                  </>
+                  )
+                }
+              </div>
+            <div className="">
               {!(dataCotizacion?.detalle?.length) && (
                 <ButtonTable onClick={onFindDetail}>
                   Obtener detalle
@@ -544,6 +631,13 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
                 </button>
               </div>
             </div>
+          <CreateTaskByDateModal 
+            closeModal={closeModalTask}
+            isOpen={isOpenTask}
+            openModal={openModalTask}
+            //@ts-ignore
+            cotizacion={dataCotizacion || undefined}
+          />
         </>
     )
 }

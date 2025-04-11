@@ -47,6 +47,11 @@ export const CreateVisitModal = ({ isOpen, onClose, initialDay, onOpen }: Create
    })
   const {data: dataProyecto, loading: loadingProyecto} = useProyectosQuery({
     variables: {
+      where: {
+        worker: {
+          _eq: user?.id || ''
+        }
+      },
       pagination: {
         skip: 0,
         take: 9999999

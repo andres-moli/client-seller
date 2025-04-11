@@ -153,6 +153,10 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
               Actualizado: {new Date().toLocaleTimeString()}
             </div>
           </div>
+          <div>
+            <h3 className="h-5 w-px bg-gray-300 dark:bg-gray-600 mx-2">Fecha de Hoy</h3>
+            <p className="text-xl font-bold">{dayjs().locale("es").format("dddd, D [de] MMMM YYYY")}</p>
+          </div>
           </div>
         </div>
         <div

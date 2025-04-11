@@ -29,6 +29,7 @@ export default function Home() {
       />
       <div className="grid grid-cols-12 gap-4 md:gap-6">
         <div className="col-span-12 space-y-6 xl:col-span-7">
+          <RecentOrders />
           <EcommerceMetrics />
           {/* Enviamos los datos de ventas como prop */}
           <MonthlySalesChart data={data?.ventasPorVendedor || []} loading={loading} />
@@ -52,7 +53,6 @@ export default function Home() {
         </div>
 
         <div className="col-span-12 xl:col-span-7">
-          <RecentOrders />
           <EmbudoVentas />
         </div>
       </div>

@@ -5,17 +5,19 @@ import { useUser } from "../../context/UserContext";
 import dayjs from "dayjs";
 import TextArea from "../../components/form/input/TextArea";
 import SearchableSelect, { Option } from "../../components/form/selectSeach";
-import { ProyectosStatusEnum, useCitiesQuery, useClientsQuery, useCreateProyectoMutation, useCreateProyectoReferenciaMutation, useMarcaProyectosQuery, useProyectoQuery, useRemoveProyectoReferenciaMutation, useTipoProyectosQuery, useUpdateProyectoMutation } from "../../domain/graphql";
+import { ProyectosStatusEnum, TaskPrioridad, TaskStatus, useCitiesQuery, useClientsQuery, useCreateProyectoMutation, useCreateProyectoReferenciaMutation, useCreateTaskMutation, useMarcaProyectosQuery, useProyectoQuery, useRemoveProyectoReferenciaMutation, useTipoProyectosQuery, useUpdateProyectoMutation } from "../../domain/graphql";
 import { CurrencyInput } from "../../components/form/NumberCurrey";
 import Select from "../../components/form/Select";
 import { z } from "zod";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
 import { formatCurrency, ToastyErrorGraph } from "../../lib/utils";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../components/ui/table";
+import { ButtonTable, Table, TableBody, TableCell, TableHeader, TableRow } from "../../components/ui/table";
 import { Loader, Trash2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
 import { apolloClient } from "../../main.config";
+import { CreateTaskByDateModal } from "../task/createModalTaskByDate";
+import { useModal } from "../../hooks/useModal";
 
 interface ProjectItem {
   id: string;
@@ -42,10 +44,12 @@ export default function ViewProyecto({id}: {id: string}) {
   
   // Mover todos los hooks al inicio
   const [title, setTitle] = useState('');
+  const [titleTask, setTitleTask] = useState('');
   const [description, setDescription] = useState('');
   const [observacion, setObservacion] = useState("");
   const [clientIntegrador, setClientIntegrador] = useState('');
   const [clientFinal, setClientFinal] = useState('');
+  const [shwonDate,setShowDate] = useState(false);
   const [cityId, setCityId] = useState('');
   const [status, setStatus] = useState<ProyectosStatusEnum>();
   const [value, setValue] = useState(0);
@@ -56,9 +60,13 @@ export default function ViewProyecto({id}: {id: string}) {
   const [selectedReferencia, setSelectedReferencia] = useState("");
   const [referenciaMaca, setReferenciaMarca] = useState<Option[]>([]);
   const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [dueDateTask, setDueDateTask] = useState(dayjs().format("YYYY-MM-DD"));
+  const [priority, setPriority] = useState<TaskPrioridad>(TaskPrioridad.Media);
+  const {isOpen: isOpenTask, closeModal: closeModalTask, openModal: openModalTask} = useModal()
   const [actualizarProyecto] = useUpdateProyectoMutation()
   const [addItem] = useCreateProyectoReferenciaMutation()
   const [remove] = useRemoveProyectoReferenciaMutation()
+  const [createTask] = useCreateTaskMutation()
 
   // Consultas - también deben estar al inicio
   const {data: dataProyect, loading: loadingProyect, error,refetch} = useProyectoQuery({
@@ -83,6 +91,7 @@ export default function ViewProyecto({id}: {id: string}) {
       setStatus(dataProyect.proyecto.status);
       setValue(dataProyect.proyecto.value);
       setDueDate(dayjs(dataProyect.proyecto.dateExpiration).format("YYYY-MM-DD hh:mm:ss"));
+      setTitleTask('seguimiento del proyecto ( ' + dataProyect.proyecto.name  + ' )')
     }
   }, [dataProyect]);
   useEffect(()=>{
@@ -276,6 +285,43 @@ export default function ViewProyecto({id}: {id: string}) {
     toast.success('Eliminado con exito')
     setProjects(projects.filter(project => project.id !== id));
   };
+  const handleCreateTask = async () => {
+    try {
+        const result = await Swal.fire({
+          title: "¿Estás seguro?",
+          text: "¿Deseas crear esta tarea?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Sí, crear",
+          cancelButtonText: "Cancelar",
+        });
+        if(result.dismiss){
+          return
+        }
+        if(result.isConfirmed) {      
+          const res = await createTask({
+              variables: {
+                createInput: {
+                    taskDateExpiration: dueDateTask,
+                    taskName: titleTask,
+                    taskPriority: priority,
+                    taskStatus: TaskStatus.Creada,
+                    workerId: user?.id || '',
+                    proyectoId: dataProyect.proyecto.id
+                  }
+              }
+          })
+          if(res.errors){
+              toast.error('Hubo un error: ' + res.errors[0]);
+              return
+          }
+          apolloClient.cache.evict({ fieldName: "tasks" })
+          toast.success('Tarea Creada con exito')
+        }
+    } catch (err){
+        ToastyErrorGraph(err as any)
+    }
+  };
   return (
     <div>
       <PageMeta
@@ -318,10 +364,47 @@ export default function ViewProyecto({id}: {id: string}) {
                   className="dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-base text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                 />
               </div>
-    
+              <div className="flex flex-col md:flex-row md:items-center md:gap-4 w-full">
+                <div className="md:w-auto">
+                  <ButtonTable onClick={() => setShowDate((prev) => !prev)}>
+                    {shwonDate ? 'Ocultar fecha' : 'Crear Recordatorio'}
+                  </ButtonTable>
+                </div>
+                {
+                  shwonDate && (
+                    <>
+                    <div className="w-full md:w-64">
+                      <input
+                        id="event-start-date"
+                        type="datetime-local"
+                        value={dueDateTask}
+                        onChange={(e) => {
+                          setDueDateTask(e.target.value);
+                          e.target.blur(); // 👈 esto cierra el picker
+                          handleCreateTask();
+                        }}
+                        className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                      />
+                    </div>
+                    <div className="relative w-full">
+                      <input
+                        id="title"
+                        type="text"
+                        value={titleTask}
+                        onChange={(e) => setTitleTask(e.target.value)}
+                        className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                      />
+                    </div>
+                  </>
+                  )
+                }
+              </div>
+
+
+
               {/* Campo: Fecha de vencimiento */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-              <div className="mt-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="mt-0">
                 <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                   Fecha de vencimiento
                 </label>
@@ -335,7 +418,7 @@ export default function ViewProyecto({id}: {id: string}) {
                   />
                 </div>
               </div>
-              <div className="mt-6">
+              <div className="mt-0">
                 {
                   loading || !clientIntegrador
                   ?
@@ -354,7 +437,7 @@ export default function ViewProyecto({id}: {id: string}) {
                   </>
                 }
               </div>
-              <div className="mt-6">
+              <div className="mt-0">
                 {
                   loading || !clientFinal
                   ?
@@ -562,6 +645,13 @@ export default function ViewProyecto({id}: {id: string}) {
           </div>
         </div>
       </div>
+      <CreateTaskByDateModal 
+        closeModal={closeModalTask}
+        isOpen={isOpenTask}
+        openModal={openModalTask}
+        //@ts-ignore
+        proyecto={dataProyect.proyecto || undefined}
+      />
     </div>
   );
 }

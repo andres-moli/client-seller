@@ -9,14 +9,16 @@ import {
   import Badge from "../../components/ui/badge/Badge";
 import { useNavigate } from "react-router";
 import { useUser } from "../../context/UserContext";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { OrderTypes, useCotizacionesQuery, useFindSeachCotizacionLazyQuery, useFindSeachCotizacionQuery } from "../../domain/graphql";
 import { formatCurrency } from "../../lib/utils";
 import SearchableSelect, { Option } from "../../components/form/selectSeach";
 import { Pagination } from "../../components/ui/table/pagination";
 import { toast } from "sonner";
 import dayjs from "dayjs";
-import { Eye } from "lucide-react";
+import { Eye, Search } from "lucide-react";
+import { debounce } from "lodash";
+import Input from "../../components/form/input/InputField";
 const currentYear = new Date().getFullYear();
   
 // Generar opciones de años (3 años atrás hasta 3 años adelante)
@@ -52,6 +54,7 @@ const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth()
 const [itemsPerPage, setItemsPerPage] = useState(10);
 const [currentPage, setCurrentPage] = useState(1);
 const [isFind, setIsFinf] = useState(false);
+const [searchTerm, setSearchTerm] = useState("");
 const [find] = useFindSeachCotizacionLazyQuery()
 const handlePageChange = (page: number) => {
   setCurrentPage(page);
@@ -66,7 +69,28 @@ const {data, loading, refetch} = useCotizacionesQuery({
     where: {
       vendedor: {
         _eq: user?.identificationNumber || ''
-      }
+      },
+      ...(searchTerm && {
+        _and: [
+          {
+            nitCliente: {
+              _contains: searchTerm
+            },
+            _or: [{
+              nombreCliente: {
+                _contains: searchTerm
+              },
+              _or: [
+                {
+                  numeroCotizacion: {
+                    _contains: searchTerm
+                  }
+                }
+              ]
+            }]
+          }
+        ]
+      })
     },
     orderBy: {
       fecha: OrderTypes.Desc
@@ -77,21 +101,40 @@ const {data, loading, refetch} = useCotizacionesQuery({
     }
   }
 })
-const onFind = async () => {
-  setIsFinf(true)
-  const toastId = toast.loading('Buscando cotizaciónes en el fomplus...');
-  await find({
-    variables: {
-      cotizacionSeachInput: {
-        ano: selectedYear,
-        mes: selectedMonth
+  // Debounce search to avoid too many requests
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((term: string) => {
+        setSearchTerm(term);
+        setCurrentPage(1); // Reset to first page when searching
+      }, 500),
+    []
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSearch(e.target.value);
+  };
+  const onFind = async () => {
+    setIsFinf(true)
+    const toastId = toast.loading('Buscando cotizaciónes en el fomplus...');
+    await find({
+      variables: {
+        cotizacionSeachInput: {
+          ano: selectedYear,
+          mes: selectedMonth
+        }
       }
-    }
-  })
-  refetch()
-  setIsFinf(false)
-  toast.dismiss(toastId)
-}
+    })
+    refetch()
+    setIsFinf(false)
+    toast.dismiss(toastId)
+  }
 return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
     <div className="max-w-full overflow-x-auto">
@@ -123,6 +166,15 @@ return (
           >
             Buscar...
           </ButtonTable>
+          <div className="relative w-full max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Buscar por nombre o nit o numero de cotizacion..."
+              className="pl-10 w-full"
+              onChange={handleSearchChange}
+            />
+          </div>
         </div>
         <div className="min-w-[1102px]">
         <Table>

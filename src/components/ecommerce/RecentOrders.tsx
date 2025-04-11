@@ -94,30 +94,6 @@ export default function RecentOrders() {
               >
                 Nombre
               </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Descripcion
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Fecha
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Estado
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-              Prioridad
-              </TableCell>
             </TableRow>
           </TableHeader>
 
@@ -128,40 +104,6 @@ export default function RecentOrders() {
                 <TableRow key={task.id}>
                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {task.taskName}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {task.taskDescription}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {dayjs(task.taskDateExpiration).format('YYYY-MM-DD')}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    <Badge
-                    size="sm"
-                    color={
-                      task.taskStatus === TaskStatus.EnProgreso
-                        ? "warning"
-                        : task.taskStatus === TaskStatus.Pendiente 
-                        ? "light"
-                        : "error"
-                    }
-                    >
-                    {task.taskStatus.replace(/_/g, " ")}
-                    </Badge>
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    <Badge
-                    size="sm"
-                    color={
-                        task.taskPriority === TaskPrioridad.Baja
-                        ? "success"
-                        : task.taskPriority === TaskPrioridad.Media
-                        ? "warning"
-                        : "error"
-                    }
-                    >
-                    {task.taskPriority}
-                    </Badge>
                 </TableCell>
                 </TableRow>
             ))}

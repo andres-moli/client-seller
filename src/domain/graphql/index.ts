@@ -393,8 +393,12 @@ export type CreateTaskCommentInput = {
 };
 
 export type CreateTaskInput = {
+  /** ID del proyecto asignado a la tarea (optional) */
+  cotizacionId?: InputMaybe<Scalars['String']['input']>;
   /** Saber si viene o no del admin(opcional) */
   isAdmin?: InputMaybe<Scalars['Boolean']['input']>;
+  /** ID del proyecto asignado a la tarea (optional) */
+  proyectoId?: InputMaybe<Scalars['String']['input']>;
   /** Fecha de vencimiento de la tarea */
   taskDateExpiration: Scalars['DateTime']['input'];
   /** Descripción de la tarea (opcional) */
@@ -663,6 +667,8 @@ export type FindCotizacionWhere = {
   _or?: InputMaybe<Array<FindCotizacionWhere>>;
   fecha?: InputMaybe<DateFilter>;
   nitCliente?: InputMaybe<StringFilter>;
+  nombreCliente?: InputMaybe<StringFilter>;
+  numeroCotizacion?: InputMaybe<StringFilter>;
   proyecto?: InputMaybe<StringFilter>;
   vendedor?: InputMaybe<StringFilter>;
 };
@@ -783,8 +789,10 @@ export type FindTaskTypeOrderBy = {
 export type FindTaskTypeWhere = {
   _and?: InputMaybe<Array<FindTaskTypeWhere>>;
   _or?: InputMaybe<Array<FindTaskTypeWhere>>;
+  cotizacion?: InputMaybe<StringFilter>;
   createdAt?: InputMaybe<DateFilter>;
   description?: InputMaybe<StringFilter>;
+  proyecto?: InputMaybe<StringFilter>;
   taskDateExpiration?: InputMaybe<DateFilter>;
   taskStatus?: InputMaybe<StringFilter>;
   worker?: InputMaybe<StringFilter>;
@@ -1883,6 +1891,7 @@ export type Proyectos = {
 };
 
 export enum ProyectosStatusEnum {
+  Cancelado = 'CANCELADO',
   Exploracion = 'EXPLORACION',
   GanadoCerrado = 'GANADO_CERRADO',
   Negociacion = 'NEGOCIACION',
@@ -2823,10 +2832,12 @@ export type StringFilter = {
 
 export type Task = {
   __typename?: 'Task';
+  cotizacion?: Maybe<Cotizacion>;
   createdAt: Scalars['DateTime']['output'];
   createdByUser: User;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['ID']['output'];
+  proyecto?: Maybe<Proyectos>;
   taskComment: Array<TaskComment>;
   taskDateExpiration: Scalars['String']['output'];
   taskDescription?: Maybe<Scalars['String']['output']>;
@@ -2943,6 +2954,7 @@ export type UpdateCotizacionDetalleInput = {
 
 export type UpdateCotizacionInput = {
   ciudadCliente?: InputMaybe<Scalars['String']['input']>;
+  deleteProyect?: InputMaybe<Scalars['Boolean']['input']>;
   descripcion?: InputMaybe<Scalars['String']['input']>;
   emailCliente?: InputMaybe<Scalars['String']['input']>;
   fecha?: InputMaybe<Scalars['DateTime']['input']>;
@@ -3167,9 +3179,13 @@ export type UpdateTaskCoomentInput = {
 };
 
 export type UpdateTaskInput = {
+  /** ID del proyecto asignado a la tarea (optional) */
+  cotizacionId?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   /** Saber si viene o no del admin(opcional) */
   isAdmin?: InputMaybe<Scalars['Boolean']['input']>;
+  /** ID del proyecto asignado a la tarea (optional) */
+  proyectoId?: InputMaybe<Scalars['String']['input']>;
   /** Fecha de vencimiento de la tarea */
   taskDateExpiration?: InputMaybe<Scalars['DateTime']['input']>;
   /** Descripción de la tarea (opcional) */
@@ -3844,7 +3860,7 @@ export type TasksQueryVariables = Exact<{
 }>;
 
 
-export type TasksQuery = { __typename?: 'Query', tasks: Array<{ __typename?: 'Task', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, taskName: string, taskDescription?: string | null, taskDateExpiration: string, taskPriority: TaskPrioridad, taskStatus: TaskStatus, worker: { __typename?: 'User', email: string, identificationType?: UserDocumentTypes | null, identificationNumber?: string | null, fullName: string }, createdByUser: { __typename?: 'User', email: string, identificationType?: UserDocumentTypes | null, identificationNumber?: string | null, fullName: string }, taskComment: Array<{ __typename?: 'TaskComment', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, taskDescription?: string | null, taskStatus: TaskStatus, createdByUser: { __typename?: 'User', email: string, identificationType?: UserDocumentTypes | null, identificationNumber?: string | null, fullName: string }, file?: { __typename?: 'FileInfo', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, fileName: string, fileExtension: string, fileMode: FileModes, fileMongoId?: string | null, url: string } | null }> }> };
+export type TasksQuery = { __typename?: 'Query', tasks: Array<{ __typename?: 'Task', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, taskName: string, taskDescription?: string | null, taskDateExpiration: string, taskPriority: TaskPrioridad, taskStatus: TaskStatus, worker: { __typename?: 'User', email: string, identificationType?: UserDocumentTypes | null, identificationNumber?: string | null, fullName: string }, createdByUser: { __typename?: 'User', email: string, identificationType?: UserDocumentTypes | null, identificationNumber?: string | null, fullName: string }, taskComment: Array<{ __typename?: 'TaskComment', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, taskDescription?: string | null, taskStatus: TaskStatus, createdByUser: { __typename?: 'User', email: string, identificationType?: UserDocumentTypes | null, identificationNumber?: string | null, fullName: string }, file?: { __typename?: 'FileInfo', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, fileName: string, fileExtension: string, fileMode: FileModes, fileMongoId?: string | null, url: string } | null }>, proyecto?: { __typename?: 'Proyectos', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name: string, value: number, status: ProyectosStatusEnum, dateExpiration: any, description?: string | null } | null, cotizacion?: { __typename?: 'Cotizacion', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, numeroCotizacion: string, fecha: any, nombreCliente: string, nombreVendedor: string, vendedor: string, ciudadCliente: string, emailCliente: string, nitCliente: string, valor: number, status?: CotizacionStatusEnum | null, descripcion?: string | null } | null }> };
 
 export type CreateTaskMutationVariables = Exact<{
   createInput: CreateTaskInput;
@@ -7098,6 +7114,34 @@ export const TasksDocument = gql`
         fileMongoId
         url
       }
+    }
+    proyecto {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      name
+      value
+      status
+      dateExpiration
+      description
+    }
+    cotizacion {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      numeroCotizacion
+      fecha
+      nombreCliente
+      nombreVendedor
+      vendedor
+      ciudadCliente
+      emailCliente
+      nitCliente
+      valor
+      status
+      descripcion
     }
   }
 }

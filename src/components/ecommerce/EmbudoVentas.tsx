@@ -4,6 +4,7 @@ import { ResponsiveFunnel } from '@nivo/funnel';
 import { ProyectoEmbudoDto, ProyectosStatusEnum, useFindStatisticStatusProyectQuery } from '../../domain/graphql';
 import { useUser } from '../../context/UserContext';
 import { formatCurrency } from '../../lib/utils';
+import { useNavigate } from 'react-router';
 
 const ordenEmbudo: ProyectosStatusEnum[] = [
     ProyectosStatusEnum.Presentacion,
@@ -15,6 +16,7 @@ const ordenEmbudo: ProyectosStatusEnum[] = [
 
 const EmbudoVentas: React.FC = () => {
     const { user } = useUser();
+    const navigate = useNavigate()
     const { loading, error, data } = useFindStatisticStatusProyectQuery({
         variables: {
             findStatisticStatusProyectId: user?.id || ''
@@ -54,7 +56,10 @@ const EmbudoVentas: React.FC = () => {
     };
 
     const datosEmbudo = procesarDatosEmbudo();
-
+    const onClickStatu = (v: any) => {
+        const status = v?.data?.id
+        navigate(`/proyect?status=${status}`)
+    }
     return (
         <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03] mt-6 overflow-hidden">
             <div className="bg-white shadow-default rounded-2xl dark:bg-gray-900 p-6">
@@ -63,6 +68,7 @@ const EmbudoVentas: React.FC = () => {
                 {datosEmbudo.length > 0 ? (
                     <div className="h-[400px] w-full"> {/* Contenedor con altura fija */}
                         <ResponsiveFunnel
+                            onClick={(v) => onClickStatu(v)}
                             data={datosEmbudo}
                             margin={{ top: 40, right: 60, bottom: 80, left: 60 }}
                             valueFormat=">-.0f"

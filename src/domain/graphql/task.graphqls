@@ -46,6 +46,34 @@ query Tasks($orderBy: [FindTaskTypeOrderBy!], $where: FindTaskTypeWhere, $pagina
         url
       }
     }
+    proyecto {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      name
+      value
+      status
+      dateExpiration
+      description
+    }
+    cotizacion {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      numeroCotizacion
+      fecha
+      nombreCliente
+      nombreVendedor
+      vendedor
+      ciudadCliente
+      emailCliente
+      nitCliente
+      valor
+      status
+      descripcion
+    }
   }
 }
 mutation CreateTask($createInput: CreateTaskInput!) {

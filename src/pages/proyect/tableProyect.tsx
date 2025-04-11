@@ -6,11 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { OrderTypes, useProyectosQuery } from "../../domain/graphql";
 import { useUser } from "../../context/UserContext";
 import { formatCurrency } from "../../lib/utils";
-import { Eye, Search } from "lucide-react";
+import { Eye, Search, Trash2 } from "lucide-react";
 import { Pagination } from "../../components/ui/table/pagination";
 import { useState, useEffect, useMemo } from "react";
 import { debounce } from "lodash";
@@ -22,7 +22,8 @@ export default function ProyectTable() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const status = searchParams.get("status");
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -31,13 +32,23 @@ export default function ProyectTable() {
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1);
   };
+  const handleClearFilter = () => {
+    searchParams.delete("status");
+    setSearchParams(searchParams); // esto actualiza la URL
+    refetch()
+  };
 
-  const { data, loading } = useProyectosQuery({
+  const { data, loading, refetch } = useProyectosQuery({
     variables: {
       where: {
         worker: {
           _eq: user?.id || ''
         },
+        ...(status && {
+          status: {
+            _eq: status
+          }
+        }),
         ...(searchTerm && {
           _and: [
             {
@@ -95,6 +106,7 @@ export default function ProyectTable() {
             onChange={handleSearchChange}
           />
         </div>
+        <Trash2  onAbort={handleClearFilter} className="cursor-pointer"/>
         <ButtonTable onClick={() => navigate('/create-proyect')}>
           Crear proyecto
         </ButtonTable>

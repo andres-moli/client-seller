@@ -8,10 +8,12 @@ import {
   File, 
   Trash2Icon,
   Eye,
+  Text,
+  Trash2,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
 import ViewProyecto from "./viewProyect";
-import { OrderTypes, ProyectComment, useCotizacionesQuery, useCreateProyectCommentMutation, useProyectCommentsQuery } from "../../domain/graphql";
+import { OrderTypes, ProyectComment, TaskPrioridad, TaskStatus, useCotizacionesQuery, useCreateProyectCommentMutation, useProyectCommentsQuery, useTasksQuery, useUpdateCotizacionMutation } from "../../domain/graphql";
 import TextArea from "../../components/form/input/TextArea";
 import Swal from "sweetalert2";
 import { toast } from "sonner";
@@ -22,6 +24,8 @@ import handleUploadImage from "../../lib/uptloadFile";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../components/ui/table";
 import dayjs from "dayjs";
 import { Pagination } from "../../components/ui/table/pagination";
+import TableSkeleton from "../../components/ui/loaders/table";
+import Badge from "../../components/ui/badge/Badge";
 /**
  * Convierte bytes a la unidad más apropiada (KB, MB o GB)
  * @param bytes - El número de bytes a convertir
@@ -82,7 +86,14 @@ export default function IndexProyectView() {
       icon: <File size={18} />,
       // @ts-ignore
       content: <DocumentosTab comments={data?.proyectComments || []} loading={loading} id={id}/>
+    },
+    {
+      id: "task",
+      label: "Tareas",
+      icon: <Text size={18} />,
+      content: <TaskTab key={id} id={id}/>
     }
+    
   ];
 
   return (
@@ -214,6 +225,7 @@ function CotizacionesTab({id}: { id: string}) {
   const navigate  = useNavigate()
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [updateCotizacion] = useUpdateCotizacionMutation()
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -222,7 +234,7 @@ function CotizacionesTab({id}: { id: string}) {
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1); // Resetear a la primera página cuando cambia el tamaño
   };
-  const {data, loading} = useCotizacionesQuery({
+  const {data, loading, refetch} = useCotizacionesQuery({
     variables: {
       where: {
         proyecto: {
@@ -238,6 +250,37 @@ function CotizacionesTab({id}: { id: string}) {
       }
     }
   })
+  const onUpdateProyect = async (id: string) => {
+    try {
+      const result = await Swal.fire({
+        title: "¿Estás seguro?",
+        text: "¿Deseas eliminar esta cotización del proyecto?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Sí, actualizar",
+        cancelButtonText: "Cancelar",
+      })
+
+      if(result.isConfirmed) {        
+        const res = await updateCotizacion({
+          variables: {
+            updateInput: {
+              id: id,
+              deleteProyect: true
+            }
+          }
+        })
+        if(res.errors){
+          toast.error('Hubo un error: ' + res.errors[0])
+          return
+        }
+        refetch()
+        toast.success('Actualizado con éxito')
+      }
+    } catch (err) {
+      ToastyErrorGraph(err as any)
+    }
+  }
   return (
     <div>
       <h3 className="mb-4 text-lg font-medium text-gray-800 dark:text-white">
@@ -302,6 +345,10 @@ function CotizacionesTab({id}: { id: string}) {
                 onClick={() => navigate(`/view-cotizacion/${coti.id}`)}
                 className="cursor-pointer"
               />
+              <Trash2 
+                onClick={()=> onUpdateProyect(coti.id)}
+                className="cursor-pointer"
+              />
             </TableCell>
           </TableRow>
         ))}
@@ -320,7 +367,140 @@ function CotizacionesTab({id}: { id: string}) {
     </div>
   );
 }
+function TaskTab({id}: { id: string}) {
+  const navigate  = useNavigate()
+  const {data, loading} = useTasksQuery({
+    variables: {
+      where: {
+        proyecto: {
+          _eq: id
+        }
+      },
+      orderBy: {
+        taskDateExpiration: OrderTypes.Desc
+      },
+    }
+  })
+  return (
+    <div>
+      <h3 className="mb-4 text-lg font-medium text-gray-800 dark:text-white">
+        Tareas
+      </h3>
+      <div className="overflow-x-auto">
+      {
+        loading ? (
+          (
+            <TableSkeleton/>
+          )
+        )
+        :
+        (
+          <Table>
+          {/* Table Header */}
+          <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+          <TableRow>
+              <TableCell
+              isHeader
+              className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+              Creado por
+              </TableCell>
+              <TableCell
+              isHeader
+              className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+              Nombre
+              </TableCell>
+              <TableCell
+              isHeader
+              className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+              Descripción
+              </TableCell>
+              <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+              Fecha de vencimiento
+              </TableCell>
+              <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+              # de comentarios
+              </TableCell>
+              <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+              Estado
+              </TableCell>
+              <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+              Prioridad
+              </TableCell>
+          </TableRow>
+          </TableHeader>
 
+          {/* Table Body */}
+          <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+          {data?.tasks.map((task) => (
+              <TableRow key={task.id}>
+              <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {task.createdByUser.fullName}
+              </TableCell>
+              <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {task.taskName}
+              </TableCell>
+              <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {task.taskDescription}
+              </TableCell>
+              <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {dayjs(task.taskDateExpiration).format('YYYY-MM-DD')}
+              </TableCell>
+              <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {task.taskComment.length}
+              </TableCell>
+              <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  <Badge
+                  size="sm"
+                  color={
+                    task.taskStatus === TaskStatus.EnProgreso
+                      ? "warning"
+                      : task.taskStatus === TaskStatus.Pendiente 
+                      ? "light"
+                      : "error"
+                  }
+                  >
+                  {task.taskStatus.replace(/_/g, " ")}
+                  </Badge>
+              </TableCell>
+              <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  <Badge
+                  size="sm"
+                  color={
+                      task.taskPriority === TaskPrioridad.Baja
+                      ? "success"
+                      : task.taskPriority === TaskPrioridad.Media
+                      ? "warning"
+                      : "error"
+                  }
+                  >
+                  {task.taskPriority}
+                  </Badge>
+              </TableCell>
+              </TableRow>
+          ))}
+          </TableBody>
+      </Table>
+        )
+      }
+      </div>
+    </div>
+  );
+}
 function DocumentosTab({comments, id}: {comments: ProyectComment[], loading: boolean, id: string}) {
   const files = comments.filter(comment => comment.file)
   const [file, setFile] = useState<React.ChangeEvent<HTMLInputElement>>();

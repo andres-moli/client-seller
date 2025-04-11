@@ -18,6 +18,7 @@ import { apolloClient } from "../../main.config";
 import { useNavigate } from "react-router";
 import { useModal } from "../../hooks/useModal";
 import { CreateClientModal } from "../client/createClient";
+import { CreateTaskByDateModal } from "../task/createModalTaskByDate";
 interface ProjectItem {
   id: string;
   tipo: string;
