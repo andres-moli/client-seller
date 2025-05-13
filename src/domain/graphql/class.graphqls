@@ -1,0 +1,57 @@
+query Classes {
+  Classes {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    description
+    status
+    subclasses {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      name
+      description
+      status
+    }
+  }
+}
+query CellsByClass($classId: String!, $subClassId: String) {
+  cellsByClass(classId: $classId, subClassId: $subClassId) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    cell {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      celular
+      region
+      nit
+      nombre
+      apellido
+      direccion
+      email
+      ciudad
+      empresa
+      verify
+      city {
+        id
+        createdAt
+        updatedAt
+        deletedAt
+        code
+        name
+      }
+      tipoCliente
+      type
+      status
+      fullName
+    }
+    notes
+  }
+}

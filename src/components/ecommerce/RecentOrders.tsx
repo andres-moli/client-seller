@@ -23,7 +23,17 @@ export default function RecentOrders() {
         },
         taskDateExpiration: {
           _between: [dayjs().startOf('day').format('YYYY-MM-DD HH:mm:ss'), dayjs().endOf('day').format('YYYY-MM-DD HH:mm:ss')]
-        }
+        },
+        _or: [{
+          taskStatus: {
+            _eq: TaskStatus.Vencida
+          },
+          _and: [{
+            worker: {
+              _eq: user?.id
+            },
+          }]
+        }]
       },
       orderBy: {
         taskDateExpiration: OrderTypes.Desc,
@@ -102,9 +112,18 @@ export default function RecentOrders() {
           <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
           {data?.tasks.map((task) => (
                 <TableRow key={task.id}>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                <TableCell 
+                className={`px-4 py-3 ${task.taskStatus === TaskStatus.Vencida ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'} text-start text-theme-sm `}>
                     {task.taskName}
                 </TableCell>
+                {
+                  task.taskStatus === TaskStatus.Vencida && (
+                    <TableCell 
+                    className={`px-4 py-3 text-red-500 dark:text-red-400 text-start text-theme-sm `}>
+                        {task.taskDateExpiration}
+                    </TableCell>
+                  )
+                }
                 </TableRow>
             ))}
           </TableBody>

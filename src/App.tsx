@@ -30,6 +30,7 @@ import { CalendarMainPage } from "./pages/calendar/calendarMain";
 import { LoagerPage } from "./pages/AuthPages/looager";
 import IndexClientView from "./pages/client/indexClient";
 import VentasPage from "./pages/ventas";
+import ClassesPage from "./pages/class";
 
 export default function App() {
   return (
@@ -54,6 +55,7 @@ export default function App() {
             <Route path="/view-cotizacion/:id" element={<ViewCotizacionPage />} />
             <Route path="/task" element={<TaskPage />} />
             <Route path="/ventas" element={<VentasPage />} />
+            <Route path="/class" element={<ClassesPage />} />
             <Route path="/blank" element={<Blank />} />
 
             {/* Forms */}

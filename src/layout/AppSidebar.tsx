@@ -19,6 +19,7 @@ import {
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import SidebarWidget from "./SidebarWidget";
+import { ServerCrash } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -58,6 +59,11 @@ const navItems: NavItem[] = [
     icon: <UserCircleIcon />,
     name: "Clientes",
     path: "/client",
+  },
+  {
+    icon: <ServerCrash />,
+    name: "Provedores",
+    path: "/class",
   },
   // {
   //   name: "Forms",
