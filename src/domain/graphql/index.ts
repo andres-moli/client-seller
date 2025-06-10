@@ -178,16 +178,20 @@ export type Cotizacion = {
   detalle?: Maybe<Array<DetalleCotizacion>>;
   emailCliente: Scalars['String']['output'];
   fecha: Scalars['DateTime']['output'];
+  fechaRecordatorio?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['ID']['output'];
   nitCliente: Scalars['String']['output'];
   nombreCliente: Scalars['String']['output'];
   nombreVendedor: Scalars['String']['output'];
   numeroCotizacion: Scalars['String']['output'];
+  plazo?: Maybe<Scalars['Float']['output']>;
   proyecto?: Maybe<Proyectos>;
+  recordatorioEnviado: Scalars['Boolean']['output'];
   status?: Maybe<CotizacionStatusEnum>;
   updatedAt: Scalars['DateTime']['output'];
   valor: Scalars['Float']['output'];
   vendedor: Scalars['String']['output'];
+  whatsappEnviado: Scalars['Boolean']['output'];
 };
 
 export type CotizacionSeachInput = {
@@ -197,6 +201,7 @@ export type CotizacionSeachInput = {
 
 export enum CotizacionStatusEnum {
   Aceptada = 'ACEPTADA',
+  Enviada = 'ENVIADA',
   Ganada = 'GANADA',
   Perdida = 'PERDIDA',
   Revisada = 'REVISADA'
@@ -302,6 +307,13 @@ export type CreateDummyInput = {
 export type CreateEmailInput = {
   address: Scalars['String']['input'];
   cellId: Scalars['ID']['input'];
+};
+
+export type CreateFichaTecnicaInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  fileId: Scalars['ID']['input'];
+  referencia: Scalars['String']['input'];
+  status: FichaTecnicaEnum;
 };
 
 export type CreateFletesInput = {
@@ -709,6 +721,23 @@ export type FacturaPorClienteDto = {
   tem_vended?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type FichaTecnica = {
+  __typename?: 'FichaTecnica';
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  file?: Maybe<FileInfo>;
+  id: Scalars['ID']['output'];
+  referencia: Scalars['String']['output'];
+  status: FichaTecnicaEnum;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export enum FichaTecnicaEnum {
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE'
+}
+
 export type FileInfo = {
   __typename?: 'FileInfo';
   chunkSize?: Maybe<Scalars['Float']['output']>;
@@ -842,6 +871,19 @@ export type FindDummyWhere = {
   secondField?: InputMaybe<DateFilter>;
   thirdField?: InputMaybe<NumberFilter>;
   type?: InputMaybe<FindDummyTypeWhere>;
+};
+
+export type FindFichaTecnicaOrderBy = {
+  createdAt?: InputMaybe<OrderTypes>;
+};
+
+export type FindFichaTecnicaWhere = {
+  _and?: InputMaybe<Array<FindFichaTecnicaWhere>>;
+  _or?: InputMaybe<Array<FindFichaTecnicaWhere>>;
+  description?: InputMaybe<StringFilter>;
+  file?: InputMaybe<StringFilter>;
+  referencia?: InputMaybe<StringFilter>;
+  status?: InputMaybe<StringFilter>;
 };
 
 export type FindFletesOrderBy = {
@@ -1182,6 +1224,7 @@ export type Mutation = {
   createDocumentType: DocumentType;
   createDummiesX: Array<Dummy>;
   createDummy: Dummy;
+  createFichaTecnica: FichaTecnica;
   createFletes: Fletes;
   createGroup: WsGroup;
   createMarcaProyecto: MarcaProyecto;
@@ -1224,6 +1267,7 @@ export type Mutation = {
   removeCotizacion: Cotizacion;
   removeDocumentType: DocumentType;
   removeDummy: Dummy;
+  removeFichaTecnica: FichaTecnica;
   removeFletes: Fletes;
   removeGroup: WsGroup;
   removeGroupWithCells: WsGroupCell;
@@ -1255,6 +1299,7 @@ export type Mutation = {
   removeVisitType: VisitType;
   removeWsEmail: WsEmail;
   replaceAllRolesFx: Array<RoleFx>;
+  resendCotizacionByNumber: Scalars['Boolean']['output'];
   resetPassword: User;
   resetSuperAdmin: User;
   saveDetalleCotizacion: Scalars['Boolean']['output'];
@@ -1277,6 +1322,7 @@ export type Mutation = {
   updateDetalleCotizacion: DetalleCotizacion;
   updateDocumentType: DocumentType;
   updateDummy: Dummy;
+  updateFichaTecnica: FichaTecnica;
   updateFletes: Fletes;
   updateGroup: WsGroup;
   updateMarcaProyecto: MarcaProyecto;
@@ -1383,6 +1429,11 @@ export type MutationCreateDocumentTypeArgs = {
 
 export type MutationCreateDummyArgs = {
   createInput: CreateDummyInput;
+};
+
+
+export type MutationCreateFichaTecnicaArgs = {
+  createInput: CreateFichaTecnicaInput;
 };
 
 
@@ -1591,6 +1642,11 @@ export type MutationRemoveDummyArgs = {
 };
 
 
+export type MutationRemoveFichaTecnicaArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationRemoveFletesArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1748,6 +1804,12 @@ export type MutationReplaceAllRolesFxArgs = {
 };
 
 
+export type MutationResendCotizacionByNumberArgs = {
+  cell: Scalars['String']['input'];
+  numeroCotizacion: Scalars['String']['input'];
+};
+
+
 export type MutationResetPasswordArgs = {
   password: Scalars['String']['input'];
 };
@@ -1852,6 +1914,11 @@ export type MutationUpdateDocumentTypeArgs = {
 
 export type MutationUpdateDummyArgs = {
   updateInput: UpdateDummyInput;
+};
+
+
+export type MutationUpdateFichaTecnicaArgs = {
+  updateInput: UpdateFichaTecnicaInput;
 };
 
 
@@ -2293,6 +2360,9 @@ export type Query = {
   dummies: Array<Dummy>;
   dummiesCount: MetadataPagination;
   dummy: Dummy;
+  fichaTecnica: FichaTecnica;
+  fichaTecnicas: Array<FichaTecnica>;
+  fichaTecnicasCount: MetadataPagination;
   file: FileInfo;
   findAll: Array<UserKey>;
   findAllFacturaCliente: Array<FletesWithDocument>;
@@ -2671,6 +2741,25 @@ export type QueryDummiesCountArgs = {
 
 export type QueryDummyArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryFichaTecnicaArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryFichaTecnicasArgs = {
+  orderBy?: InputMaybe<Array<FindFichaTecnicaOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindFichaTecnicaWhere>;
+};
+
+
+export type QueryFichaTecnicasCountArgs = {
+  orderBy?: InputMaybe<Array<FindFichaTecnicaOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindFichaTecnicaWhere>;
 };
 
 
@@ -3323,6 +3412,8 @@ export type StringFilter = {
   _endswith?: InputMaybe<Scalars['String']['input']>;
   _eq?: InputMaybe<Scalars['String']['input']>;
   _in?: InputMaybe<Array<Scalars['String']['input']>>;
+  _isNotNull?: InputMaybe<Scalars['Boolean']['input']>;
+  _isNull?: InputMaybe<Scalars['Boolean']['input']>;
   _like?: InputMaybe<Scalars['String']['input']>;
   _neq?: InputMaybe<Scalars['String']['input']>;
   _notcontains?: InputMaybe<Scalars['String']['input']>;
@@ -3548,6 +3639,14 @@ export type UpdateEmailInput = {
   address?: InputMaybe<Scalars['String']['input']>;
   cellId?: InputMaybe<Scalars['ID']['input']>;
   id: Scalars['ID']['input'];
+};
+
+export type UpdateFichaTecnicaInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  fileId?: InputMaybe<Scalars['ID']['input']>;
+  id: Scalars['ID']['input'];
+  referencia?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<FichaTecnicaEnum>;
 };
 
 export type UpdateFletesInput = {
@@ -4426,6 +4525,14 @@ export type UpdateDetalleCotizacionMutationVariables = Exact<{
 
 
 export type UpdateDetalleCotizacionMutation = { __typename?: 'Mutation', updateDetalleCotizacion: { __typename?: 'DetalleCotizacion', id: string } };
+
+export type ResendCotizacionByNumberMutationVariables = Exact<{
+  numeroCotizacion: Scalars['String']['input'];
+  cell: Scalars['String']['input'];
+}>;
+
+
+export type ResendCotizacionByNumberMutation = { __typename?: 'Mutation', resendCotizacionByNumber: boolean };
 
 export type FindAllFacturaClienteQueryVariables = Exact<{
   input: FacturaPorClienteDto;
@@ -6563,6 +6670,38 @@ export function useUpdateDetalleCotizacionMutation(baseOptions?: Apollo.Mutation
 export type UpdateDetalleCotizacionMutationHookResult = ReturnType<typeof useUpdateDetalleCotizacionMutation>;
 export type UpdateDetalleCotizacionMutationResult = Apollo.MutationResult<UpdateDetalleCotizacionMutation>;
 export type UpdateDetalleCotizacionMutationOptions = Apollo.BaseMutationOptions<UpdateDetalleCotizacionMutation, UpdateDetalleCotizacionMutationVariables>;
+export const ResendCotizacionByNumberDocument = gql`
+    mutation ResendCotizacionByNumber($numeroCotizacion: String!, $cell: String!) {
+  resendCotizacionByNumber(numeroCotizacion: $numeroCotizacion, cell: $cell)
+}
+    `;
+export type ResendCotizacionByNumberMutationFn = Apollo.MutationFunction<ResendCotizacionByNumberMutation, ResendCotizacionByNumberMutationVariables>;
+
+/**
+ * __useResendCotizacionByNumberMutation__
+ *
+ * To run a mutation, you first call `useResendCotizacionByNumberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResendCotizacionByNumberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resendCotizacionByNumberMutation, { data, loading, error }] = useResendCotizacionByNumberMutation({
+ *   variables: {
+ *      numeroCotizacion: // value for 'numeroCotizacion'
+ *      cell: // value for 'cell'
+ *   },
+ * });
+ */
+export function useResendCotizacionByNumberMutation(baseOptions?: Apollo.MutationHookOptions<ResendCotizacionByNumberMutation, ResendCotizacionByNumberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ResendCotizacionByNumberMutation, ResendCotizacionByNumberMutationVariables>(ResendCotizacionByNumberDocument, options);
+      }
+export type ResendCotizacionByNumberMutationHookResult = ReturnType<typeof useResendCotizacionByNumberMutation>;
+export type ResendCotizacionByNumberMutationResult = Apollo.MutationResult<ResendCotizacionByNumberMutation>;
+export type ResendCotizacionByNumberMutationOptions = Apollo.BaseMutationOptions<ResendCotizacionByNumberMutation, ResendCotizacionByNumberMutationVariables>;
 export const FindAllFacturaClienteDocument = gql`
     query FindAllFacturaCliente($input: FacturaPorClienteDto!) {
   findAllFacturaCliente(input: $input) {

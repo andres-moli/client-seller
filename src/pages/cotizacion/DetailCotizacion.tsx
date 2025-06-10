@@ -1,5 +1,5 @@
 import dayjs from "dayjs"
-import { CotizacionStatusEnum, DetalleCotizacion, TaskPrioridad, TaskStatus, useCotizacionQuery, useCreateTaskMutation, useProyectosQuery, useSaveDetalleCotizacionMutation, useUpdateCotizacionMutation, useUpdateDetalleCotizacionMutation } from "../../domain/graphql"
+import { CotizacionStatusEnum, DetalleCotizacion, TaskPrioridad, TaskStatus, useCotizacionQuery, useCreateTaskMutation, useProyectosQuery, useResendCotizacionByNumberMutation, useSaveDetalleCotizacionMutation, useUpdateCotizacionMutation, useUpdateDetalleCotizacionMutation } from "../../domain/graphql"
 import SearchableSelect, { Option } from "../../components/form/selectSeach"
 import { useEffect, useState } from "react"
 import { ButtonTable, Table, TableBody, TableCell, TableHeader, TableRow } from "../../components/ui/table"
@@ -12,6 +12,7 @@ import { CreateTaskByDateModal } from "../task/createModalTaskByDate"
 import { useModal } from "../../hooks/useModal"
 import { useUser } from "../../context/UserContext"
 import { apolloClient } from "../../main.config"
+import WhatsAppButton from "../../components/common/WhatsAppButton"
 interface ResultadosCalculo {
   subtotalCosto: number;
   subtotalVenta: number;
@@ -97,7 +98,7 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
     const [updateCotizacion] = useUpdateCotizacionMutation()
     const [updateDetalle] = useUpdateDetalleCotizacionMutation()
     const [createTask] = useCreateTaskMutation()
-    
+    const [resenedCotizacion] = useResendCotizacionByNumberMutation()
     const {isOpen: isOpenTask, closeModal: closeModalTask, openModal: openModalTask} = useModal()
     const { user } = useUser()
     const {data, loading, refetch} = useCotizacionQuery({
@@ -221,7 +222,25 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
         ToastyErrorGraph(err as any)
       }
     }
-
+    const handleSendNumber = async (number: string) => {
+      const toastId = toast.loading('Enviando...')
+      const res = await resenedCotizacion({
+        variables: {
+          cell: number,
+          numeroCotizacion: data?.cotizacion.numeroCotizacion || ''
+        }
+      })
+      if(res.data){
+        toast.dismiss(toastId)
+        toast.success('Whastapp Enviando Con éxito')
+        return
+      }
+      if(!res.data || res.errors){
+        toast.dismiss(toastId)
+        toast.error('Uuupss hubo un error al enviar la cotizacion')
+        return
+      }
+    };
     if(loading){
         return <>Cargando Información...</>
     }
@@ -638,6 +657,7 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
             //@ts-ignore
             cotizacion={dataCotizacion || undefined}
           />
+          <WhatsAppButton onSend={handleSendNumber} />
         </>
     )
 }
