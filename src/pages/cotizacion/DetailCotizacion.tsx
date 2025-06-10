@@ -12,7 +12,7 @@ import { CreateTaskByDateModal } from "../task/createModalTaskByDate"
 import { useModal } from "../../hooks/useModal"
 import { useUser } from "../../context/UserContext"
 import { apolloClient } from "../../main.config"
-import WhatsAppButton from "../../components/common/WhatsAppButton"
+import WhatsAppButton, { ISendtoDtoWhastappButton } from "../../components/common/WhatsAppButton"
 interface ResultadosCalculo {
   subtotalCosto: number;
   subtotalVenta: number;
@@ -222,12 +222,16 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
         ToastyErrorGraph(err as any)
       }
     }
-    const handleSendNumber = async (number: string) => {
+    const handleSendNumber = async (input: ISendtoDtoWhastappButton) => {
       const toastId = toast.loading('Enviando...')
       const res = await resenedCotizacion({
         variables: {
-          cell: number,
-          numeroCotizacion: data?.cotizacion.numeroCotizacion || ''
+          input: {
+            cell: input.phoneNumber,
+            numeroCotizacion: data?.cotizacion.numeroCotizacion || '',
+            apellido: input.apellido,
+            nombre: input.nombre
+          }
         }
       })
       if(res.data){
@@ -657,7 +661,7 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
             //@ts-ignore
             cotizacion={dataCotizacion || undefined}
           />
-          <WhatsAppButton onSend={handleSendNumber} />
+          <WhatsAppButton onSend={handleSendNumber}  nit={data?.cotizacion.nitCliente || ''}/>
         </>
     )
 }

@@ -144,3 +144,25 @@ query GetVentasTop20Clientes($vendedor: String!) {
     venta
   }
 }
+query CellsByNit($where: FindCellWhere) {
+  Cells(where: $where) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    celular
+    region
+    nit
+    nombre
+    apellido
+    direccion
+    email
+    ciudad
+    empresa
+    verify
+    tipoCliente
+    type
+    status
+    fullName
+  }
+}

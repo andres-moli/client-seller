@@ -194,6 +194,13 @@ export type Cotizacion = {
   whatsappEnviado: Scalars['Boolean']['output'];
 };
 
+export type CotizacionResendByNumber = {
+  apellido?: InputMaybe<Scalars['String']['input']>;
+  cell: Scalars['String']['input'];
+  nombre?: InputMaybe<Scalars['String']['input']>;
+  numeroCotizacion: Scalars['String']['input'];
+};
+
 export type CotizacionSeachInput = {
   ano: Scalars['Float']['input'];
   mes: Scalars['Float']['input'];
@@ -1805,8 +1812,7 @@ export type MutationReplaceAllRolesFxArgs = {
 
 
 export type MutationResendCotizacionByNumberArgs = {
-  cell: Scalars['String']['input'];
-  numeroCotizacion: Scalars['String']['input'];
+  input: CotizacionResendByNumber;
 };
 
 
@@ -4442,6 +4448,13 @@ export type GetVentasTop20ClientesQueryVariables = Exact<{
 
 export type GetVentasTop20ClientesQuery = { __typename?: 'Query', getVentasTop20Clientes: Array<{ __typename?: 'VentasTrabajadorCliente', vendedor?: string | null, nit?: string | null, nombreCliente?: string | null, total?: number | null, venta?: number | null }> };
 
+export type CellsByNitQueryVariables = Exact<{
+  where?: InputMaybe<FindCellWhere>;
+}>;
+
+
+export type CellsByNitQuery = { __typename?: 'Query', Cells: Array<{ __typename?: 'WsCell', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, celular: string, region: string, nit?: string | null, nombre?: string | null, apellido?: string | null, direccion?: string | null, email?: string | null, ciudad?: string | null, empresa?: string | null, verify?: boolean | null, tipoCliente?: TypeClientEnum | null, type?: CellTpeStatusEmun | null, status: CellStatusEmun, fullName: string }> };
+
 export type ClientContactsQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<FindClientContactOrderBy> | FindClientContactOrderBy>;
   pagination?: InputMaybe<Pagination>;
@@ -4527,8 +4540,7 @@ export type UpdateDetalleCotizacionMutationVariables = Exact<{
 export type UpdateDetalleCotizacionMutation = { __typename?: 'Mutation', updateDetalleCotizacion: { __typename?: 'DetalleCotizacion', id: string } };
 
 export type ResendCotizacionByNumberMutationVariables = Exact<{
-  numeroCotizacion: Scalars['String']['input'];
-  cell: Scalars['String']['input'];
+  input: CotizacionResendByNumber;
 }>;
 
 
@@ -6154,6 +6166,63 @@ export type GetVentasTop20ClientesQueryHookResult = ReturnType<typeof useGetVent
 export type GetVentasTop20ClientesLazyQueryHookResult = ReturnType<typeof useGetVentasTop20ClientesLazyQuery>;
 export type GetVentasTop20ClientesSuspenseQueryHookResult = ReturnType<typeof useGetVentasTop20ClientesSuspenseQuery>;
 export type GetVentasTop20ClientesQueryResult = Apollo.QueryResult<GetVentasTop20ClientesQuery, GetVentasTop20ClientesQueryVariables>;
+export const CellsByNitDocument = gql`
+    query CellsByNit($where: FindCellWhere) {
+  Cells(where: $where) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    celular
+    region
+    nit
+    nombre
+    apellido
+    direccion
+    email
+    ciudad
+    empresa
+    verify
+    tipoCliente
+    type
+    status
+    fullName
+  }
+}
+    `;
+
+/**
+ * __useCellsByNitQuery__
+ *
+ * To run a query within a React component, call `useCellsByNitQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCellsByNitQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCellsByNitQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useCellsByNitQuery(baseOptions?: Apollo.QueryHookOptions<CellsByNitQuery, CellsByNitQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CellsByNitQuery, CellsByNitQueryVariables>(CellsByNitDocument, options);
+      }
+export function useCellsByNitLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CellsByNitQuery, CellsByNitQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CellsByNitQuery, CellsByNitQueryVariables>(CellsByNitDocument, options);
+        }
+export function useCellsByNitSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CellsByNitQuery, CellsByNitQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CellsByNitQuery, CellsByNitQueryVariables>(CellsByNitDocument, options);
+        }
+export type CellsByNitQueryHookResult = ReturnType<typeof useCellsByNitQuery>;
+export type CellsByNitLazyQueryHookResult = ReturnType<typeof useCellsByNitLazyQuery>;
+export type CellsByNitSuspenseQueryHookResult = ReturnType<typeof useCellsByNitSuspenseQuery>;
+export type CellsByNitQueryResult = Apollo.QueryResult<CellsByNitQuery, CellsByNitQueryVariables>;
 export const ClientContactsDocument = gql`
     query ClientContacts($orderBy: [FindClientContactOrderBy!], $pagination: Pagination, $where: FindClientContactWhere) {
   clientContacts(orderBy: $orderBy, pagination: $pagination, where: $where) {
@@ -6671,8 +6740,8 @@ export type UpdateDetalleCotizacionMutationHookResult = ReturnType<typeof useUpd
 export type UpdateDetalleCotizacionMutationResult = Apollo.MutationResult<UpdateDetalleCotizacionMutation>;
 export type UpdateDetalleCotizacionMutationOptions = Apollo.BaseMutationOptions<UpdateDetalleCotizacionMutation, UpdateDetalleCotizacionMutationVariables>;
 export const ResendCotizacionByNumberDocument = gql`
-    mutation ResendCotizacionByNumber($numeroCotizacion: String!, $cell: String!) {
-  resendCotizacionByNumber(numeroCotizacion: $numeroCotizacion, cell: $cell)
+    mutation ResendCotizacionByNumber($input: CotizacionResendByNumber!) {
+  resendCotizacionByNumber(input: $input)
 }
     `;
 export type ResendCotizacionByNumberMutationFn = Apollo.MutationFunction<ResendCotizacionByNumberMutation, ResendCotizacionByNumberMutationVariables>;
@@ -6690,8 +6759,7 @@ export type ResendCotizacionByNumberMutationFn = Apollo.MutationFunction<ResendC
  * @example
  * const [resendCotizacionByNumberMutation, { data, loading, error }] = useResendCotizacionByNumberMutation({
  *   variables: {
- *      numeroCotizacion: // value for 'numeroCotizacion'
- *      cell: // value for 'cell'
+ *      input: // value for 'input'
  *   },
  * });
  */

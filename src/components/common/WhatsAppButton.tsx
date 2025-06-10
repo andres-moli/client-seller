@@ -3,9 +3,16 @@ import React, { useState } from 'react';
 import { Modal } from '../ui/modal';
 import Button from '../ui/button/Button';
 import { toast } from 'sonner';
-
+import { ContactList } from './ContactList';
+import { useCellsByNitQuery, WsCell } from '../../domain/graphql';
+export interface ISendtoDtoWhastappButton {
+  phoneNumber: string;
+  apellido: string;
+  nombre: string
+}
 interface WhatsAppButtonProps {
-  onSend: (phoneNumber: string) => void;
+  onSend: (input: ISendtoDtoWhastappButton) => void;
+  nit: string;
 }
 export function validatePhoneNumber(input: string): { valid: boolean; error?: string } {
   // Elimina espacios, guiones y paréntesis
@@ -24,25 +31,45 @@ export function validatePhoneNumber(input: string): { valid: boolean; error?: st
   return { valid: true };
 }
 
-const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ onSend }) => {
+const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ onSend, nit }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
-
+  const [nombre, setNonbre] = useState('');
+  const [apellido, setApellido] = useState('');
+  const {data, loading} = useCellsByNitQuery({
+    variables: {
+      where: {
+        nit: {
+          _eq: nit
+        }
+      }
+    }
+  })
   const handleSend = () => {
     const result = validatePhoneNumber(phoneNumber);
     if (!result.valid) {
         toast.error(result.error); // o usa un estado para mostrar el error dentro del modal
         return;
     }
-    onSend(phoneNumber);
+    onSend({
+      apellido,
+      nombre,
+      phoneNumber
+    });
     setIsOpen(false);
-    setPhoneNumber('');
   };
 
   const handleCancel = () => {
     setIsOpen(false);
     setPhoneNumber('');
+    setApellido('')
+    setNonbre('')
   };
+  const handleClikcPhone = (cell: WsCell) => {
+    setPhoneNumber(cell.celular);
+    setApellido(cell.apellido || '')
+    setNonbre(cell.nombre || '')
+  }
 
   return (
     <>
@@ -67,13 +94,51 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ onSend }) => {
             <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
               Ingresa el número de teléfono a enviar la cotizacion
             </h2>
-            <input
-              type="tel"
-              placeholder="1234567890"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring focus:ring-green-400"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-            />
+            <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+              Celular 
+            </label>
+            <div  className="relative">
+              <input
+                type="tel"
+                placeholder="1234567890"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring focus:ring-green-400"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
+            </div>
+            <div className="mt-6">
+              <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                Nombre 
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={nombre}
+                  onChange={(e) => setNonbre(e.target.value)}
+                  placeholder="nombre"
+                  className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                />
+              </div>
+            </div>
+            <div className="mt-6">
+              <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                apellido 
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={apellido}
+                  onChange={(e) => setApellido(e.target.value)}
+                  placeholder="nombre"
+                  className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                />
+              </div>
+            </div>
+            {
+              loading ? <>Cargando lista de contacto</>
+              :
+              <ContactList contacts={data?.Cells || []} onCallClick={handleClikcPhone}/>
+            }
             <div className="mt-6 flex justify-end space-x-3">
               <Button
                 onClick={handleCancel}

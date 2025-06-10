@@ -77,6 +77,6 @@ mutation UpdateDetalleCotizacion($updateInput: UpdateCotizacionDetalleInput!) {
     id
   }
 }
-mutation ResendCotizacionByNumber($numeroCotizacion: String!, $cell: String!) {
-  resendCotizacionByNumber(numeroCotizacion: $numeroCotizacion, cell: $cell)
+mutation ResendCotizacionByNumber($input: CotizacionResendByNumber!) {
+  resendCotizacionByNumber(input: $input)
 }
