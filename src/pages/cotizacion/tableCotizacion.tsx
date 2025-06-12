@@ -67,9 +67,9 @@ const handleItemsPerPageChange = (newItemsPerPage: number) => {
 const {data, loading, refetch} = useCotizacionesQuery({
   variables: {
     where: {
-      vendedor: {
-        _eq: user?.identificationNumber || ''
-      },
+      // vendedor: {
+      //   _eq: user?.identificationNumber || ''
+      // },
       ...(searchTerm && {
         _and: [
           {
