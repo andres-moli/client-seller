@@ -10,6 +10,7 @@ import { useUser } from "../../context/UserContext";
 import EmbudoVentas from "../../components/ecommerce/EmbudoVentas";
 import VentasDiariasChart from "../../components/ecommerce/ventasTrabajadorDiaras";
 import { Top20VentasClientes } from "../../components/ecommerce/Top20VentasClientes";
+import { CotizacionStatisc } from "../../components/ecommerce/CotizacionStatisc";
 
 export default function Home() {
   const { user } = useUser();
@@ -30,6 +31,7 @@ export default function Home() {
       <div className="grid grid-cols-12 gap-4 md:gap-6">
         <div className="col-span-12 space-y-6 xl:col-span-7">
           <RecentOrders />
+          <CotizacionStatisc />
           <EcommerceMetrics />
           {/* Enviamos los datos de ventas como prop */}
           <MonthlySalesChart data={data?.ventasPorVendedor || []} loading={loading} />
