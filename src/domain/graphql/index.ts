@@ -179,6 +179,8 @@ export type Cotizacion = {
   emailCliente: Scalars['String']['output'];
   fecha: Scalars['DateTime']['output'];
   fechaRecordatorio?: Maybe<Scalars['DateTime']['output']>;
+  fechaVersion?: Maybe<Scalars['DateTime']['output']>;
+  fechaVersionString?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   nitCliente: Scalars['String']['output'];
   nombreCliente: Scalars['String']['output'];
@@ -245,6 +247,7 @@ export type CreateCellInput = {
   classIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   direccion?: InputMaybe<Scalars['String']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
+  emailsDto?: InputMaybe<Array<Scalars['String']['input']>>;
   empresa?: InputMaybe<Scalars['String']['input']>;
   groupIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   nit?: InputMaybe<Scalars['String']['input']>;
@@ -481,6 +484,17 @@ export type CreateSesionInput = {
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type CreateStockInput = {
+  cantidadActual?: InputMaybe<Scalars['Float']['input']>;
+  clase?: InputMaybe<Scalars['String']['input']>;
+  isDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+  nombreClase?: InputMaybe<Scalars['String']['input']>;
+  nombreReferencia?: InputMaybe<Scalars['String']['input']>;
+  referencia?: InputMaybe<Scalars['String']['input']>;
+  stcMax?: InputMaybe<Scalars['Float']['input']>;
+  stcMin?: InputMaybe<Scalars['Float']['input']>;
+};
+
 export type CreateSubClassInput = {
   classId: Scalars['String']['input'];
   description?: InputMaybe<Scalars['String']['input']>;
@@ -584,10 +598,12 @@ export type CreateWsBatchDto = {
   celularesIds: Array<Scalars['String']['input']>;
   createdByUserAtId?: InputMaybe<Scalars['String']['input']>;
   descripcion?: InputMaybe<Scalars['String']['input']>;
+  fileHtmlId?: InputMaybe<Scalars['String']['input']>;
   fileId?: InputMaybe<Scalars['String']['input']>;
   groupId?: InputMaybe<Scalars['String']['input']>;
   message: Scalars['String']['input'];
   nombre: Scalars['String']['input'];
+  type?: InputMaybe<TypeBundleEnum>;
   variables?: InputMaybe<Array<KeyValuePairInput>>;
 };
 
@@ -630,6 +646,7 @@ export type DetalleCotizacion = {
   descripcion: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   referencia: Scalars['String']['output'];
+  tiempo_entrega?: Maybe<Scalars['String']['output']>;
   total: Scalars['Float']['output'];
   unidadMedida: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -839,6 +856,7 @@ export type FindCotizacionWhere = {
   nombreCliente?: InputMaybe<StringFilter>;
   numeroCotizacion?: InputMaybe<StringFilter>;
   proyecto?: InputMaybe<StringFilter>;
+  status?: InputMaybe<StringFilter>;
   vendedor?: InputMaybe<StringFilter>;
 };
 
@@ -970,6 +988,16 @@ export type FindSesionWhere = {
   description?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
   status?: InputMaybe<StringFilter>;
+};
+
+export type FindStockTypeOrderBy = {
+  createdAt?: InputMaybe<OrderTypes>;
+};
+
+export type FindStockTypeWhere = {
+  _and?: InputMaybe<Array<FindStockTypeWhere>>;
+  _or?: InputMaybe<Array<FindStockTypeWhere>>;
+  createdAt?: InputMaybe<DateFilter>;
 };
 
 export type FindSubClassOrderBy = {
@@ -1217,6 +1245,7 @@ export type Mutation = {
   addCellToGroup: WsGroupCell;
   addUserRole: User;
   assignSubordinate: User;
+  bundleMailSend: SendLoteResult;
   codeConfirmation: User;
   crearConcepto: ConceptoTable;
   create: RoleFx;
@@ -1251,6 +1280,7 @@ export type Mutation = {
   createRole: Role;
   createRoleFx: Array<RoleFx>;
   createSesion: WsSesion;
+  createStock: Stock;
   createSubClass: SubClass;
   createTask: Task;
   createTaskComment: TaskComment;
@@ -1294,6 +1324,7 @@ export type Mutation = {
   removeRole: Role;
   removeRoleFx: Array<Scalars['String']['output']>;
   removeSesion: WsSesion;
+  removeStock: Stock;
   removeSubClass: SubClass;
   removeSubordinate: User;
   removeTask: Task;
@@ -1348,10 +1379,12 @@ export type Mutation = {
   updateReferenciaProyecto: ReferenciaProyecto;
   updateRole: Role;
   updateSesion: WsSesion;
+  updateStock: Stock;
   updateSubClass: SubClass;
   updateTask: Task;
   updateTaskComment: TaskComment;
   updateTipoProyecto: TipoProyecto;
+  updateToStock: ResponseDto;
   updateUser: User;
   updateUserInformation: User;
   updateUserPassword: User;
@@ -1381,6 +1414,11 @@ export type MutationAddUserRoleArgs = {
 export type MutationAssignSubordinateArgs = {
   managerId: Scalars['String']['input'];
   subordinateId: Scalars['String']['input'];
+};
+
+
+export type MutationBundleMailSendArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -1536,6 +1574,11 @@ export type MutationCreateRoleFxArgs = {
 
 export type MutationCreateSesionArgs = {
   createInput: CreateSesionInput;
+};
+
+
+export type MutationCreateStockArgs = {
+  createInput: CreateStockInput;
 };
 
 
@@ -1746,6 +1789,11 @@ export type MutationRemoveRoleFxArgs = {
 
 
 export type MutationRemoveSesionArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveStockArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -2015,6 +2063,11 @@ export type MutationUpdateRoleArgs = {
 
 export type MutationUpdateSesionArgs = {
   updateInput: UpdateSessionInput;
+};
+
+
+export type MutationUpdateStockArgs = {
+  updateInput: UpdateStockInput;
 };
 
 
@@ -2434,6 +2487,9 @@ export type Query = {
   sesion: WsSesion;
   sesiones: Array<WsSesion>;
   sesionesCount: MetadataPagination;
+  stock: Stock;
+  stocks: Array<Stock>;
+  stocksCount: MetadataPagination;
   task: Task;
   taskComment: TaskComment;
   tasks: Array<Task>;
@@ -3096,6 +3152,25 @@ export type QuerySesionesCountArgs = {
 };
 
 
+export type QueryStockArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryStocksArgs = {
+  orderBy?: InputMaybe<Array<FindStockTypeOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindStockTypeWhere>;
+};
+
+
+export type QueryStocksCountArgs = {
+  orderBy?: InputMaybe<Array<FindStockTypeOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindStockTypeWhere>;
+};
+
+
 export type QueryTaskArgs = {
   id: Scalars['ID']['input'];
 };
@@ -3268,6 +3343,15 @@ export enum ResendOption {
   Todos = 'TODOS'
 }
 
+/** Respuesta global estándar */
+export type ResponseDto = {
+  __typename?: 'ResponseDto';
+  /** Mensaje informativo de la operación */
+  message: Scalars['String']['output'];
+  /** Indica si la operación fue exitosa */
+  success: Scalars['Boolean']['output'];
+};
+
 export type Role = {
   __typename?: 'Role';
   createdAt: Scalars['DateTime']['output'];
@@ -3413,6 +3497,23 @@ export enum StatusVisitEnum {
   Reprogrammed = 'reprogrammed'
 }
 
+export type Stock = {
+  __typename?: 'Stock';
+  cantidadActual: Scalars['Float']['output'];
+  clase: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  fichaTecnica?: Maybe<FileInfo>;
+  id: Scalars['ID']['output'];
+  isDeleted?: Maybe<Scalars['Boolean']['output']>;
+  nombreClase: Scalars['String']['output'];
+  nombreReferencia: Scalars['String']['output'];
+  referencia: Scalars['String']['output'];
+  stcMax: Scalars['Float']['output'];
+  stcMin: Scalars['Float']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type StringFilter = {
   _contains?: InputMaybe<Scalars['String']['input']>;
   _endswith?: InputMaybe<Scalars['String']['input']>;
@@ -3505,6 +3606,11 @@ export type TipoProyecto = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export enum TypeBundleEnum {
+  Emails = 'EMAILS',
+  Whastapp = 'WHASTAPP'
+}
+
 export enum TypeClientEnum {
   ClienteFinal = 'CLIENTE_FINAL',
   Distribuidor = 'DISTRIBUIDOR',
@@ -3541,11 +3647,13 @@ export type UpdateBundleInput = {
   createdByUserAtId?: InputMaybe<Scalars['String']['input']>;
   deleteFile?: InputMaybe<Scalars['Boolean']['input']>;
   descripcion?: InputMaybe<Scalars['String']['input']>;
+  fileHtmlId?: InputMaybe<Scalars['String']['input']>;
   fileId?: InputMaybe<Scalars['String']['input']>;
   groupId?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   message?: InputMaybe<Scalars['String']['input']>;
   nombre?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<TypeBundleEnum>;
   variables?: InputMaybe<Array<KeyValuePairInput>>;
 };
 
@@ -3558,6 +3666,7 @@ export type UpdateCellInput = {
   classIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   direccion?: InputMaybe<Scalars['String']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
+  emailsDto?: InputMaybe<Array<Scalars['String']['input']>>;
   empresa?: InputMaybe<Scalars['String']['input']>;
   groupIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   id: Scalars['ID']['input'];
@@ -3844,6 +3953,18 @@ export type UpdateStatusInput = {
   id: Scalars['String']['input'];
   status: StatusVisitEnum;
   token: Scalars['String']['input'];
+};
+
+export type UpdateStockInput = {
+  cantidadActual?: InputMaybe<Scalars['Float']['input']>;
+  clase?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  isDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+  nombreClase?: InputMaybe<Scalars['String']['input']>;
+  nombreReferencia?: InputMaybe<Scalars['String']['input']>;
+  referencia?: InputMaybe<Scalars['String']['input']>;
+  stcMax?: InputMaybe<Scalars['Float']['input']>;
+  stcMin?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type UpdateSubClassInput = {
@@ -4149,10 +4270,12 @@ export type WsBatch = {
   error?: Maybe<Scalars['String']['output']>;
   estado: WsBatchStatus;
   file?: Maybe<FileInfo>;
+  fileHtml?: Maybe<FileInfo>;
   group?: Maybe<WsGroup>;
   id: Scalars['ID']['output'];
   message: Scalars['String']['output'];
   nombre: Scalars['String']['output'];
+  type: TypeBundleEnum;
   updatedAt: Scalars['DateTime']['output'];
   variables?: Maybe<Array<KeyValuePair>>;
 };
@@ -4502,7 +4625,7 @@ export type CotizacionesQueryVariables = Exact<{
 }>;
 
 
-export type CotizacionesQuery = { __typename?: 'Query', cotizaciones: Array<{ __typename?: 'Cotizacion', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, numeroCotizacion: string, fecha: any, nombreCliente: string, nombreVendedor: string, vendedor: string, ciudadCliente: string, emailCliente: string, nitCliente: string, valor: number }>, cotizacionesCount: { __typename?: 'MetadataPagination', totalItems?: number | null, itemsPerPage?: number | null, totalPages?: number | null, currentPage?: number | null } };
+export type CotizacionesQuery = { __typename?: 'Query', cotizaciones: Array<{ __typename?: 'Cotizacion', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, numeroCotizacion: string, fecha: any, nombreCliente: string, nombreVendedor: string, vendedor: string, ciudadCliente: string, emailCliente: string, nitCliente: string, valor: number, status?: CotizacionStatusEnum | null }>, cotizacionesCount: { __typename?: 'MetadataPagination', totalItems?: number | null, itemsPerPage?: number | null, totalPages?: number | null, currentPage?: number | null } };
 
 export type FindSeachCotizacionQueryVariables = Exact<{
   cotizacionSeachInput: CotizacionSeachInput;
@@ -6485,6 +6608,7 @@ export const CotizacionesDocument = gql`
     emailCliente
     nitCliente
     valor
+    status
   }
   cotizacionesCount(orderBy: $orderBy, where: $where, pagination: $pagination) {
     totalItems

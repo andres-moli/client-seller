@@ -13,6 +13,7 @@ query Cotizaciones($orderBy: [FindCotizacionOrderBy!], $where: FindCotizacionWhe
     emailCliente
     nitCliente
     valor
+    status
   }
   cotizacionesCount(orderBy: $orderBy, where: $where, pagination: $pagination) {
     totalItems

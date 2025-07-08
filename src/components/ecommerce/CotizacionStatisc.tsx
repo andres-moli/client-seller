@@ -2,6 +2,7 @@ import axios from "axios";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../ui/table"
 import { useEffect, useState } from "react";
 import { formatCurrency } from "../../lib/utils";
+import { useUser } from "../../context/UserContext";
 interface Cotizacion {
   vendedor: string;
   nombre: string;
@@ -13,11 +14,11 @@ interface Cotizacion {
 }
 export const CotizacionStatisc = () => {
   const [cotizaciones, setCotizaciones] = useState<Cotizacion[]>([]);
-
+  const {user} = useUser();
   useEffect(() => {
     const fetchCotizaciones = async () => {
       try {
-        const url = `${import.meta.env.VITE_APP_GRAPH}ventas/cotizaciones/72329722`;
+        const url = `${import.meta.env.VITE_APP_GRAPH}ventas/cotizaciones/${user?.identificationNumber || '123456789'}`;
         const { data } = await axios.get<Cotizacion[]>(url);
         setCotizaciones(data);
       } catch (error) {

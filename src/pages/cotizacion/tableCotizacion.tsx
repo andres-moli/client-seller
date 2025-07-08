@@ -7,10 +7,10 @@ import {
     TableRow,
   } from "../../components/ui/table";
   import Badge from "../../components/ui/badge/Badge";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { useUser } from "../../context/UserContext";
 import { useEffect, useMemo, useState } from "react";
-import { OrderTypes, useCotizacionesQuery, useFindSeachCotizacionLazyQuery, useFindSeachCotizacionQuery } from "../../domain/graphql";
+import { CotizacionStatusEnum, OrderTypes, useCotizacionesQuery, useFindSeachCotizacionLazyQuery, useFindSeachCotizacionQuery } from "../../domain/graphql";
 import { formatCurrency } from "../../lib/utils";
 import SearchableSelect, { Option } from "../../components/form/selectSeach";
 import { Pagination } from "../../components/ui/table/pagination";
@@ -46,6 +46,11 @@ const monthOptions: Option[] = [
   { label: 'Diciembre', value: '12 '}
 ];
 export default function CotizacionTable() {
+const [searchParams] = useSearchParams();
+const vendedorParam = searchParams.get("vendedor");
+const mesParam = searchParams.get("mes");
+console.log('vendedorParam', vendedorParam)
+console.log('mesParam', mesParam)
 const navigate  = useNavigate()
 const { user } = useUser()
 // Estado para los valores seleccionados
@@ -67,9 +72,21 @@ const handleItemsPerPageChange = (newItemsPerPage: number) => {
 const {data, loading, refetch} = useCotizacionesQuery({
   variables: {
     where: {
-      // vendedor: {
-      //   _eq: user?.identificationNumber || ''
-      // },
+      status: {
+        _in: [CotizacionStatusEnum.Enviada, CotizacionStatusEnum.Aceptada, CotizacionStatusEnum.Revisada]
+      },
+      ...(vendedorParam && {
+        vendedor: {
+          _eq: vendedorParam
+        }
+      }),
+      ...(mesParam && {
+        fecha: {
+          _between: [
+            dayjs(`${new Date().getFullYear()}-${mesParam}-01`).startOf('month').toISOString(),
+            dayjs(`${new Date().getFullYear()}-${mesParam}-01`).endOf('month').toISOString()]
+        },
+      }),
       ...(searchTerm && {
         _and: [
           {
@@ -140,33 +157,7 @@ return (
     <div className="max-w-full overflow-x-auto">
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left mt-6 px-6">
           <div className="text-left">
-            <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-              Año
-            </label>
-            <SearchableSelect
-              onChange={(e) => setSelectedYear(+e)}
-              options={yearOptions}
-              defaultValue={selectedYear.toString()}
-            />
-          </div>
-          <div className="w-full">
-            <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-              Mes
-            </label>
-            <SearchableSelect
-              onChange={(e) => setSelectedMonth(+e)}
-              options={monthOptions}
-              defaultValue={selectedMonth.toString()}
-
-            />
-          </div>
-          <ButtonTable 
-          onClick={onFind}
-          disabled={isFind}
-          >
-            Buscar...
-          </ButtonTable>
-          <div className="relative w-full max-w-md">
+            <div className="relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               type="text"
@@ -175,6 +166,32 @@ return (
               onChange={handleSearchChange}
             />
           </div>
+            {/* <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+              Año
+            </label>
+            <SearchableSelect
+              onChange={(e) => setSelectedYear(+e)}
+              options={yearOptions}
+              defaultValue={selectedYear.toString()}
+            /> */}
+          </div>
+          <div className="w-full">
+            {/* <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+              Mes
+            </label>
+            <SearchableSelect
+              onChange={(e) => setSelectedMonth(+e)}
+              options={monthOptions}
+              defaultValue={selectedMonth.toString()}
+
+            /> */}
+          </div>
+          {/* <ButtonTable 
+          onClick={onFind}
+          disabled={isFind}
+          >
+            Buscar...
+          </ButtonTable> */}
         </div>
         <div className="min-w-[1102px]">
         <Table>
@@ -209,6 +226,12 @@ return (
                 isHeader
                 className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                 >
+                Estado
+                </TableCell>
+                <TableCell
+                isHeader
+                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
                 Acciones
                 </TableCell>
             </TableRow>
@@ -229,6 +252,11 @@ return (
                 </TableCell>
                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {formatCurrency(coti.valor)}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    <Badge color={coti.status === CotizacionStatusEnum.Enviada ? "warning" : coti.status === CotizacionStatusEnum.Aceptada ? "success" : "primary"}>
+                        {coti.status}
+                    </Badge>
                 </TableCell>
                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                   <Eye 
