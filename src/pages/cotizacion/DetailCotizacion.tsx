@@ -289,6 +289,10 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
           ToastyErrorGraph(err as any)
       }
     };
+    const onClickPdf = () => {
+      const url = import.meta.env.VITE_APP_GRAPH + `public/cotizacion/${data?.cotizacion.numeroCotizacion}.pdf`;
+      window.open(url, '_blank'); // Abre la URL en una nueva pestaña
+    };
     return(
         <>
             <h3 className="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl text-center">
@@ -467,6 +471,11 @@ export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id 
                   Obtener detalle
                 </ButtonTable>
               )}
+              <ButtonTable
+                onClick={onClickPdf}
+               >
+                Imprimir cotización
+               </ButtonTable>
               
               <Table>
                 <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
