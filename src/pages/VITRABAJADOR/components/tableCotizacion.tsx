@@ -1,18 +1,17 @@
-
-import { toast } from "sonner";
-import dayjs from "dayjs";
-import { Eye, Search } from "lucide-react";
-import { debounce } from "lodash";
-import { useNavigate } from "react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CotizacionStatusEnum, OrderTypes, useCotizacionesQuery } from "../../domain/graphql";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../components/ui/table";
-import { formatCurrency } from "../../lib/utils";
-import Badge from "../../components/ui/badge/Badge";
-import { Pagination } from "../../components/ui/table/pagination";
-import { useUser } from "../../context/UserContext";
+import { useNavigate } from "react-router";
+import { CotizacionStatusEnum, OrderTypes, useCotizacionesQuery } from "../../../domain/graphql";
+import dayjs from "dayjs";
+import { debounce } from "lodash";
+import { Eye, Search } from "lucide-react";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../../components/ui/table";
+import { formatCurrency } from "../../../lib/utils";
+import Badge from "../../../components/ui/badge/Badge";
+import { Pagination } from "../../../components/ui/table/pagination";
+import Input from "../../../components/form/input/InputField";
 
-export default function CotizacionTable() {
+
+export default function CotizacionTable({nit}: {nit: string}) {
 const navigate  = useNavigate()
 const [itemsPerPage, setItemsPerPage] = useState(10);
 const [currentPage, setCurrentPage] = useState(1);
@@ -20,7 +19,7 @@ const [searchTerm, setSearchTerm] = useState("");
 const handlePageChange = (page: number) => {
   setCurrentPage(page);
 };
-const {user} = useUser()
+
 const handleItemsPerPageChange = (newItemsPerPage: number) => {
   setItemsPerPage(newItemsPerPage);
   setCurrentPage(1); // Resetear a la primera página cuando cambia el tamaño
@@ -32,8 +31,8 @@ const {data, loading, refetch} = useCotizacionesQuery({
         _in: [CotizacionStatusEnum.Enviada, CotizacionStatusEnum.Aceptada, CotizacionStatusEnum.Revisada]
       },
       _and: [{
-        vendedor: {
-          _eq: user?.id || ''
+        nitCliente: {
+          _eq: nit
         }
       }, {
         _and: [{

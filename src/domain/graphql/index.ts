@@ -41,6 +41,12 @@ export type AddReferenciaToProyectoInput = {
   valor: Scalars['Float']['input'];
 };
 
+export enum AddressStatus {
+  Active = 'ACTIVE',
+  Deleted = 'DELETED',
+  Inactive = 'INACTIVE'
+}
+
 export type ApprovalTokenInput = {
   code: Scalars['String']['input'];
   token: Scalars['String']['input'];
@@ -50,6 +56,42 @@ export type AuthResponse = {
   __typename?: 'AuthResponse';
   token: Scalars['String']['output'];
   user: User;
+};
+
+export type BooleanFilter = {
+  _eq?: InputMaybe<Scalars['Boolean']['input']>;
+  _in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  _neq?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type Cart = {
+  __typename?: 'Cart';
+  active: Scalars['Boolean']['output'];
+  client: StoreClient;
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['ID']['output'];
+  items: Array<CartItem>;
+  /** Total calculado dinámicamente a partir de los ítems */
+  total?: Maybe<Scalars['Float']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type CartItem = {
+  __typename?: 'CartItem';
+  cart: Cart;
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  discountPercentage?: Maybe<Scalars['Float']['output']>;
+  id: Scalars['ID']['output'];
+  isDiscount: Scalars['Boolean']['output'];
+  product: Product;
+  quantity: Scalars['Int']['output'];
+  subtotal: Scalars['Float']['output'];
+  /** Total con descuento aplicado si corresponde */
+  total?: Maybe<Scalars['Float']['output']>;
+  unitPrice: Scalars['Float']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type CellClass = {
@@ -111,6 +153,7 @@ export type Client = {
   address?: Maybe<Scalars['String']['output']>;
   celular: Scalars['String']['output'];
   city?: Maybe<City>;
+  contact?: Maybe<Array<ClientContact>>;
   country?: Maybe<Country>;
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -145,6 +188,30 @@ export type ClientContactModel = {
   __typename?: 'ClientContactModel';
   client: Client;
   contact: Array<ClientContact>;
+};
+
+export enum ClientKind {
+  Company = 'COMPANY',
+  Normal = 'NORMAL'
+}
+
+export enum ClientStatus {
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE',
+  Pending = 'PENDING',
+  Suspended = 'SUSPENDED'
+}
+
+export enum ClientType {
+  A = 'A',
+  Aa = 'AA',
+  Aaa = 'AAA'
+}
+
+export type ClienteResponseSingIn = {
+  __typename?: 'ClienteResponseSingIn';
+  access_token: Scalars['String']['output'];
+  client: StoreClient;
 };
 
 export type CodeConfirmationInput = {
@@ -238,6 +305,17 @@ export type CreateAndRemoveRoleFxInput = {
   role: Scalars['ID']['input'];
 };
 
+export type CreateCartInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  clientId: Scalars['ID']['input'];
+  items: Array<CreateCartItemInput>;
+};
+
+export type CreateCartItemInput = {
+  productId: Scalars['ID']['input'];
+  quantity: Scalars['Int']['input'];
+};
+
 export type CreateCellInput = {
   apellido?: InputMaybe<Scalars['String']['input']>;
   asesorId?: InputMaybe<Scalars['String']['input']>;
@@ -263,6 +341,20 @@ export type CreateClassInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   status?: InputMaybe<ClassStatus>;
+};
+
+export type CreateClientAddressInput = {
+  address: Scalars['String']['input'];
+  city: Scalars['String']['input'];
+  clientId: Scalars['String']['input'];
+  complement?: InputMaybe<Scalars['String']['input']>;
+  isDefault?: Scalars['Boolean']['input'];
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  longitude?: InputMaybe<Scalars['Float']['input']>;
+  name: Scalars['String']['input'];
+  reference?: InputMaybe<Scalars['String']['input']>;
+  state: Scalars['String']['input'];
+  zipCode: Scalars['String']['input'];
 };
 
 export type CreateClientContactInput = {
@@ -332,6 +424,7 @@ export type CreateFletesInput = {
   carrierCell: Scalars['String']['input'];
   contactClient: Scalars['String']['input'];
   description: Scalars['String']['input'];
+  isTienda?: InputMaybe<Scalars['Boolean']['input']>;
   numberDocument: Scalars['String']['input'];
   numberGuia: Scalars['String']['input'];
   oip: Scalars['Float']['input'];
@@ -395,6 +488,10 @@ export type CreateNotificationInput = {
   wssRecipient?: InputMaybe<WssRecipient>;
 };
 
+export type CreateOrderInput = {
+  dummy?: InputMaybe<Scalars['ID']['input']>;
+};
+
 export type CreatePageLinkInput = {
   arguments?: InputMaybe<Array<Scalars['String']['input']>>;
   routeType?: InputMaybe<RouterType>;
@@ -413,6 +510,26 @@ export type CreateParametersInput = {
   valueString?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type CreatePaymentInput = {
+  addressLine1: Scalars['String']['input'];
+  addressLine2?: InputMaybe<Scalars['String']['input']>;
+  amount: Scalars['Float']['input'];
+  bankCode?: InputMaybe<Scalars['String']['input']>;
+  city: Scalars['String']['input'];
+  country: Scalars['String']['input'];
+  currency: Scalars['String']['input'];
+  customerDoc?: InputMaybe<Scalars['String']['input']>;
+  customerDoctype?: InputMaybe<Scalars['String']['input']>;
+  customerEmail: Scalars['String']['input'];
+  customerName: Scalars['String']['input'];
+  customerPhone?: InputMaybe<Scalars['String']['input']>;
+  customerType?: InputMaybe<Scalars['Int']['input']>;
+  orderId: Scalars['String']['input'];
+  paymentMethod: Scalars['String']['input'];
+  postalCode: Scalars['String']['input'];
+  state: Scalars['String']['input'];
+};
+
 export type CreatePositionInput = {
   name?: InputMaybe<Scalars['String']['input']>;
 };
@@ -423,6 +540,23 @@ export type CreatePresupuestoInput = {
   mes: Scalars['Float']['input'];
   valor: Scalars['Float']['input'];
   workerId: Scalars['String']['input'];
+};
+
+export type CreatePriceRuleInput = {
+  clientType: ClientType;
+  percentage: Scalars['Float']['input'];
+};
+
+export type CreateProductInput = {
+  active?: Scalars['Boolean']['input'];
+  basePrice: Scalars['Float']['input'];
+  description: Scalars['String']['input'];
+  fileIds?: InputMaybe<Array<Scalars['String']['input']>>;
+  mainPhoto: Scalars['String']['input'];
+  reference: Scalars['String']['input'];
+  rulePrice?: InputMaybe<Array<CreatePriceRuleInput>>;
+  subclassIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  title: Scalars['String']['input'];
 };
 
 export type CreateProfileInput = {
@@ -495,6 +629,26 @@ export type CreateStockInput = {
   stcMin?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type CreateStoreClientInput = {
+  captchaToken: Scalars['String']['input'];
+  clientKind: ClientKind;
+  clientType: ClientType;
+  email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  identificationType: UserDocumentTypes;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  nit: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  phone?: InputMaybe<Scalars['String']['input']>;
+  rutId: Scalars['String']['input'];
+};
+
+export type CreateStoreReviewInput = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  productId: Scalars['ID']['input'];
+  rating: Scalars['Float']['input'];
+};
+
 export type CreateSubClassInput = {
   classId: Scalars['String']['input'];
   description?: InputMaybe<Scalars['String']['input']>;
@@ -563,6 +717,8 @@ export type CreateUserInput = {
   secondSurname?: InputMaybe<Scalars['String']['input']>;
   type: UserTypes;
   typeWoker?: InputMaybe<TypeWorker>;
+  valueFreelance?: InputMaybe<Scalars['Int']['input']>;
+  valueMinVisit?: InputMaybe<Scalars['Int']['input']>;
   valueTransport?: InputMaybe<Scalars['Float']['input']>;
 };
 
@@ -649,6 +805,7 @@ export type DetalleCotizacion = {
   tiempo_entrega?: Maybe<Scalars['String']['output']>;
   total: Scalars['Float']['output'];
   unidadMedida: Scalars['String']['output'];
+  unitMedida?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   uuid: Scalars['Float']['output'];
   valorCosto: Scalars['Float']['output'];
@@ -782,6 +939,19 @@ export enum FileModes {
   Mongo = 'mongo',
   Url = 'url'
 }
+
+export type FindCartOrderBy = {
+  createdAt?: InputMaybe<OrderTypes>;
+  total?: InputMaybe<OrderTypes>;
+};
+
+export type FindCartWhere = {
+  _and?: InputMaybe<Array<FindCartWhere>>;
+  _or?: InputMaybe<Array<FindCartWhere>>;
+  clientId?: InputMaybe<StringFilter>;
+  createdAt?: InputMaybe<DateFilter>;
+  id?: InputMaybe<StringFilter>;
+};
 
 export type FindCellOrderBy = {
   createdAt?: InputMaybe<OrderTypes>;
@@ -935,6 +1105,21 @@ export type FindGroupWhere = {
   worker?: InputMaybe<StringFilter>;
 };
 
+export type FindOrderOrderBy = {
+  createdAt?: InputMaybe<OrderTypes>;
+  total?: InputMaybe<OrderTypes>;
+};
+
+export type FindOrderWhere = {
+  _and?: InputMaybe<Array<FindOrderWhere>>;
+  _or?: InputMaybe<Array<FindOrderWhere>>;
+  client?: InputMaybe<StringFilter>;
+  createdAt?: InputMaybe<DateFilter>;
+  id?: InputMaybe<StringFilter>;
+  status?: InputMaybe<StringFilter>;
+  total?: InputMaybe<NumberFilter>;
+};
+
 export type FindPresupuestoOrderBy = {
   createdAt?: InputMaybe<OrderTypes>;
 };
@@ -946,6 +1131,43 @@ export type FindPresupuestoWhere = {
   description?: InputMaybe<StringFilter>;
   mes?: InputMaybe<NumberFilter>;
   worker?: InputMaybe<StringFilter>;
+};
+
+export type FindProductFeaturedOrderBy = {
+  createdAt?: InputMaybe<OrderTypes>;
+  discountAmount?: InputMaybe<OrderTypes>;
+  discountPercentage?: InputMaybe<OrderTypes>;
+  endDate?: InputMaybe<OrderTypes>;
+  productId?: InputMaybe<OrderTypes>;
+  startDate?: InputMaybe<OrderTypes>;
+  type?: InputMaybe<OrderTypes>;
+};
+
+export type FindProductFeaturedWhere = {
+  _and?: InputMaybe<Array<FindProductFeaturedWhere>>;
+  _or?: InputMaybe<Array<FindProductFeaturedWhere>>;
+  active?: InputMaybe<BooleanFilter>;
+  discountAmount?: InputMaybe<NumberFilter>;
+  discountPercentage?: InputMaybe<NumberFilter>;
+  endDate?: InputMaybe<StringFilter>;
+  product?: InputMaybe<StringFilter>;
+  startDate?: InputMaybe<StringFilter>;
+  type?: InputMaybe<StringFilter>;
+};
+
+export type FindProductOrderBy = {
+  basePrice?: InputMaybe<OrderTypes>;
+  reference?: InputMaybe<OrderTypes>;
+  title?: InputMaybe<OrderTypes>;
+};
+
+export type FindProductWhere = {
+  _and?: InputMaybe<Array<FindProductWhere>>;
+  _or?: InputMaybe<Array<FindProductWhere>>;
+  basePrice?: InputMaybe<NumberFilter>;
+  reference?: InputMaybe<StringFilter>;
+  subclasses?: InputMaybe<StringFilter>;
+  title?: InputMaybe<StringFilter>;
 };
 
 export type FindProyectCommentTypeOrderBy = {
@@ -998,6 +1220,37 @@ export type FindStockTypeWhere = {
   _and?: InputMaybe<Array<FindStockTypeWhere>>;
   _or?: InputMaybe<Array<FindStockTypeWhere>>;
   createdAt?: InputMaybe<DateFilter>;
+};
+
+export type FindStoreClientOrderBy = {
+  createdAt?: InputMaybe<OrderTypes>;
+  email?: InputMaybe<OrderTypes>;
+  firstName?: InputMaybe<OrderTypes>;
+  lastName?: InputMaybe<OrderTypes>;
+};
+
+export type FindStoreClientWhere = {
+  _and?: InputMaybe<Array<FindStoreClientWhere>>;
+  _or?: InputMaybe<Array<FindStoreClientWhere>>;
+  clientKind?: InputMaybe<StringFilter>;
+  clientType?: InputMaybe<StringFilter>;
+  email?: InputMaybe<StringFilter>;
+  firstName?: InputMaybe<StringFilter>;
+  lastName?: InputMaybe<StringFilter>;
+  nit?: InputMaybe<StringFilter>;
+  phone?: InputMaybe<StringFilter>;
+};
+
+export type FindStoreReviewOrderBy = {
+  createdAt?: InputMaybe<OrderTypes>;
+};
+
+export type FindStoreReviewWhere = {
+  _and?: InputMaybe<Array<FindStoreReviewWhere>>;
+  _or?: InputMaybe<Array<FindStoreReviewWhere>>;
+  client?: InputMaybe<StringFilter>;
+  comment?: InputMaybe<StringFilter>;
+  product?: InputMaybe<StringFilter>;
 };
 
 export type FindSubClassOrderBy = {
@@ -1124,6 +1377,7 @@ export type Fletes = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   description: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  isTienda: Scalars['Boolean']['output'];
   numberDocument: Scalars['String']['output'];
   numberGuia: Scalars['String']['output'];
   oip: Scalars['Float']['output'];
@@ -1243,17 +1497,23 @@ export type Mutation = {
   __typename?: 'Mutation';
   acceptOrDeclineVisit: Scalars['String']['output'];
   addCellToGroup: WsGroupCell;
+  addOrUpdateCartItem: Cart;
+  addRelatedProduct: Product;
   addUserRole: User;
   assignSubordinate: User;
   bundleMailSend: SendLoteResult;
+  changePassword: Scalars['Boolean']['output'];
+  clearCart: Scalars['Boolean']['output'];
   codeConfirmation: User;
   crearConcepto: ConceptoTable;
   create: RoleFx;
   createAllPresupuestoToMonth: Scalars['Boolean']['output'];
   createBundle: WsBatch;
+  createCart: Cart;
   createCell: WsCell;
   createClass: Class;
   createClient: Client;
+  createClientAddress: StoreClientAddress;
   createClientContact: ClientContact;
   createCotizacion: Cotizacion;
   createDefaultRoles: Array<Role>;
@@ -1268,10 +1528,13 @@ export type Mutation = {
   createNotification: Notification;
   createNotificationConfig: NotificationConfig;
   createNotificationGroup: NotificationGroup;
+  createOrder: Order;
   createPageLinkInput: PageLink;
   createParameter: Parameter;
   createPositionInput: Position;
   createPresupuesto: Presupuesto;
+  createProduct: Product;
+  createProductFeatured: ProductFeatured;
   createProfile: Profile;
   createProyectComment: ProyectComment;
   createProyecto: Proyectos;
@@ -1281,6 +1544,8 @@ export type Mutation = {
   createRoleFx: Array<RoleFx>;
   createSesion: WsSesion;
   createStock: Stock;
+  createStoreClient: StoreClient;
+  createStoreReview: StoreReview;
   createSubClass: SubClass;
   createTask: Task;
   createTaskComment: TaskComment;
@@ -1289,7 +1554,10 @@ export type Mutation = {
   createVisit: Visit;
   createVisitComent: VisitComent;
   createVisitType: VisitType;
+  /** Crea una transacción en Wompi y devuelve el link del checkout */
+  createWompiPayment: ResponsePasarelaModel;
   createWsEmail: WsEmail;
+  deleteFile: Scalars['Boolean']['output'];
   eliminarConcepto: Scalars['String']['output'];
   enableAndDisableDoubleVerification: Scalars['String']['output'];
   i18nTest: Scalars['String']['output'];
@@ -1297,6 +1565,8 @@ export type Mutation = {
   recoverPassword: Scalars['String']['output'];
   remove: NotificationGroup;
   removeBundle: WsBatch;
+  removeCart: Cart;
+  removeCartItem: Cart;
   removeCell: WsCell;
   removeClass: Class;
   removeClient: Client;
@@ -1312,19 +1582,25 @@ export type Mutation = {
   removeMultiKeyRegister: MultikeyRegister;
   removeNotification: Notification;
   removeNotificationConfig: NotificationConfig;
+  removeOrder: Order;
   removePageLink: PageLink;
   removeParameter: Parameter;
   removePosition: Position;
   removePresupuesto: Presupuesto;
+  removeProduct: Product;
+  removeProductFeatured: ProductFeatured;
   removeProfile: Profile;
   removeProyectComment: ProyectComment;
   removeProyecto: Proyectos;
   removeProyectoReferencia: ProyectoReferencia;
   removeReferenciaProyecto: ReferenciaProyecto;
+  removeRelatedProduct: Product;
   removeRole: Role;
   removeRoleFx: Array<Scalars['String']['output']>;
   removeSesion: WsSesion;
   removeStock: Stock;
+  removeStoreClient: StoreClient;
+  removeStoreReview: StoreReview;
   removeSubClass: SubClass;
   removeSubordinate: User;
   removeTask: Task;
@@ -1346,14 +1622,17 @@ export type Mutation = {
   sendLoteMessagesById: SendLoteResult;
   sendLoteMessagesByOption: SendLoteResult;
   signInAdmin: AuthResponse;
+  signInClient?: Maybe<ClienteResponseSingIn>;
   signUpWithDocument: AuthResponse;
   signUpWithEmail: AuthResponse;
   signin: AuthResponse;
   update: NotificationGroup;
   updateBundle: WsBatch;
+  updateCart: Cart;
   updateCell: WsCell;
   updateClass: Class;
   updateClient: Client;
+  updateClientAddress: StoreClientAddress;
   updateClientContact: ClientContact;
   updateConcepto: ConceptoTable;
   updateCotizacion: Cotizacion;
@@ -1363,15 +1642,19 @@ export type Mutation = {
   updateFichaTecnica: FichaTecnica;
   updateFletes: Fletes;
   updateGroup: WsGroup;
+  updateItemQuantity: Cart;
   updateMarcaProyecto: MarcaProyecto;
   updateMultiKeyRegister: MultikeyRegister;
   updateNotification: Notification;
   updateNotificationConfig: NotificationConfig;
+  updateOrder: Order;
   updatePageLinkInput: PageLink;
   updateParameter: Parameter;
   updatePassword: User;
   updatePositionInput: Position;
   updatePresupuesto: Presupuesto;
+  updateProduct: Product;
+  updateProductFeatured: ProductFeatured;
   updateProfile: Profile;
   updateProyectComment: ProyectComment;
   updateProyecto: Proyectos;
@@ -1380,6 +1663,8 @@ export type Mutation = {
   updateRole: Role;
   updateSesion: WsSesion;
   updateStock: Stock;
+  updateStoreClient: StoreClient;
+  updateStoreReview: StoreReview;
   updateSubClass: SubClass;
   updateTask: Task;
   updateTaskComment: TaskComment;
@@ -1406,6 +1691,18 @@ export type MutationAddCellToGroupArgs = {
 };
 
 
+export type MutationAddOrUpdateCartItemArgs = {
+  productId: Scalars['String']['input'];
+  quantity: Scalars['Float']['input'];
+};
+
+
+export type MutationAddRelatedProductArgs = {
+  productId: Scalars['String']['input'];
+  relatedProductId: Scalars['String']['input'];
+};
+
+
 export type MutationAddUserRoleArgs = {
   addAndRemoveRoleInput: AddAndRemoveRoleInput;
 };
@@ -1419,6 +1716,12 @@ export type MutationAssignSubordinateArgs = {
 
 export type MutationBundleMailSendArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type MutationChangePasswordArgs = {
+  lastPassword: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 
@@ -1442,6 +1745,11 @@ export type MutationCreateBundleArgs = {
 };
 
 
+export type MutationCreateCartArgs = {
+  createInput: CreateCartInput;
+};
+
+
 export type MutationCreateCellArgs = {
   createInput: CreateCellInput;
 };
@@ -1454,6 +1762,11 @@ export type MutationCreateClassArgs = {
 
 export type MutationCreateClientArgs = {
   createInput: CreateClientInput;
+};
+
+
+export type MutationCreateClientAddressArgs = {
+  input: CreateClientAddressInput;
 };
 
 
@@ -1517,6 +1830,11 @@ export type MutationCreateNotificationGroupArgs = {
 };
 
 
+export type MutationCreateOrderArgs = {
+  createInput: CreateOrderInput;
+};
+
+
 export type MutationCreatePageLinkInputArgs = {
   createInput: CreatePageLinkInput;
 };
@@ -1534,6 +1852,16 @@ export type MutationCreatePositionInputArgs = {
 
 export type MutationCreatePresupuestoArgs = {
   createInput: CreatePresupuestoInput;
+};
+
+
+export type MutationCreateProductArgs = {
+  createInput: CreateProductInput;
+};
+
+
+export type MutationCreateProductFeaturedArgs = {
+  createInput: ProductFeaturedBaseInput;
 };
 
 
@@ -1582,6 +1910,16 @@ export type MutationCreateStockArgs = {
 };
 
 
+export type MutationCreateStoreClientArgs = {
+  createInput: CreateStoreClientInput;
+};
+
+
+export type MutationCreateStoreReviewArgs = {
+  createInput: CreateStoreReviewInput;
+};
+
+
 export type MutationCreateSubClassArgs = {
   createInput: CreateSubClassInput;
 };
@@ -1622,8 +1960,18 @@ export type MutationCreateVisitTypeArgs = {
 };
 
 
+export type MutationCreateWompiPaymentArgs = {
+  input: CreatePaymentInput;
+};
+
+
 export type MutationCreateWsEmailArgs = {
   createInput: CreateEmailInput;
+};
+
+
+export type MutationDeleteFileArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -1654,6 +2002,16 @@ export type MutationRemoveArgs = {
 
 export type MutationRemoveBundleArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveCartArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveCartItemArgs = {
+  productId: Scalars['String']['input'];
 };
 
 
@@ -1733,6 +2091,11 @@ export type MutationRemoveNotificationConfigArgs = {
 };
 
 
+export type MutationRemoveOrderArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationRemovePageLinkArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1749,6 +2112,16 @@ export type MutationRemovePositionArgs = {
 
 
 export type MutationRemovePresupuestoArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveProductArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveProductFeaturedArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1778,6 +2151,12 @@ export type MutationRemoveReferenciaProyectoArgs = {
 };
 
 
+export type MutationRemoveRelatedProductArgs = {
+  productId: Scalars['String']['input'];
+  relatedProductId: Scalars['String']['input'];
+};
+
+
 export type MutationRemoveRoleArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1794,6 +2173,16 @@ export type MutationRemoveSesionArgs = {
 
 
 export type MutationRemoveStockArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveStoreClientArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveStoreReviewArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1901,6 +2290,13 @@ export type MutationSignInAdminArgs = {
 };
 
 
+export type MutationSignInClientArgs = {
+  captcha_token: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+
 export type MutationSignUpWithDocumentArgs = {
   signupInput: SignupInput;
 };
@@ -1926,6 +2322,11 @@ export type MutationUpdateBundleArgs = {
 };
 
 
+export type MutationUpdateCartArgs = {
+  updateInput: UpdateCartInput;
+};
+
+
 export type MutationUpdateCellArgs = {
   updateInput: UpdateCellInput;
 };
@@ -1938,6 +2339,11 @@ export type MutationUpdateClassArgs = {
 
 export type MutationUpdateClientArgs = {
   updateInput: UpdateClientInput;
+};
+
+
+export type MutationUpdateClientAddressArgs = {
+  input: UpdateClientAddressInput;
 };
 
 
@@ -1986,6 +2392,12 @@ export type MutationUpdateGroupArgs = {
 };
 
 
+export type MutationUpdateItemQuantityArgs = {
+  productId: Scalars['String']['input'];
+  quantity: Scalars['Float']['input'];
+};
+
+
 export type MutationUpdateMarcaProyectoArgs = {
   updateInput: UpdateMarcaInput;
 };
@@ -2003,6 +2415,11 @@ export type MutationUpdateNotificationArgs = {
 
 export type MutationUpdateNotificationConfigArgs = {
   updateInput: UpdateNotificationConfigInput;
+};
+
+
+export type MutationUpdateOrderArgs = {
+  updateInput: UpdateOrderInput;
 };
 
 
@@ -2028,6 +2445,16 @@ export type MutationUpdatePositionInputArgs = {
 
 export type MutationUpdatePresupuestoArgs = {
   updateInput: UpdatePresupuestoInput;
+};
+
+
+export type MutationUpdateProductArgs = {
+  updateInput: UpdateProductInput;
+};
+
+
+export type MutationUpdateProductFeaturedArgs = {
+  updateInput: UpdateProductFeaturedInput;
 };
 
 
@@ -2068,6 +2495,16 @@ export type MutationUpdateSesionArgs = {
 
 export type MutationUpdateStockArgs = {
   updateInput: UpdateStockInput;
+};
+
+
+export type MutationUpdateStoreClientArgs = {
+  updateInput: UpdateStoreClientInput;
+};
+
+
+export type MutationUpdateStoreReviewArgs = {
+  updateInput: UpdateStoreReviewInput;
 };
 
 
@@ -2200,6 +2637,46 @@ export type NumberFilter = {
   _notbetween?: InputMaybe<Array<Scalars['Float']['input']>>;
 };
 
+export type Order = {
+  __typename?: 'Order';
+  client: StoreClient;
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['ID']['output'];
+  items: Array<OrderItem>;
+  iva: Scalars['Float']['output'];
+  payment?: Maybe<Payment>;
+  retencion: Scalars['Float']['output'];
+  status: OrderStatus;
+  subtotal: Scalars['Float']['output'];
+  total: Scalars['Float']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type OrderItem = {
+  __typename?: 'OrderItem';
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  discountPercentage?: Maybe<Scalars['Float']['output']>;
+  id: Scalars['ID']['output'];
+  isDiscount: Scalars['Boolean']['output'];
+  order: Order;
+  product: Product;
+  quantity: Scalars['Int']['output'];
+  subtotal: Scalars['Float']['output'];
+  unitPrice: Scalars['Float']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export enum OrderStatus {
+  Cancelled = 'CANCELLED',
+  Completed = 'COMPLETED',
+  Failed = 'FAILED',
+  Paid = 'PAID',
+  PendingPayment = 'PENDING_PAYMENT',
+  Shipped = 'SHIPPED'
+}
+
 export enum OrderTypes {
   Asc = 'ASC',
   Desc = 'DESC'
@@ -2236,6 +2713,40 @@ export type Parameter = {
   valueFile?: Maybe<FileInfo>;
   valueInt?: Maybe<Scalars['Float']['output']>;
   valueString?: Maybe<Scalars['String']['output']>;
+};
+
+export type Payment = {
+  __typename?: 'Payment';
+  addressLine1: Scalars['String']['output'];
+  addressLine2?: Maybe<Scalars['String']['output']>;
+  amount: Scalars['Float']['output'];
+  bankCode?: Maybe<Scalars['String']['output']>;
+  city: Scalars['String']['output'];
+  country: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  customerEmail: Scalars['String']['output'];
+  customerName: Scalars['String']['output'];
+  customerPhone?: Maybe<Scalars['String']['output']>;
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['ID']['output'];
+  order: Order;
+  paymentMethod: Scalars['String']['output'];
+  postalCode: Scalars['String']['output'];
+  provider: Scalars['String']['output'];
+  state: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+  transactionId: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type PaymentStatus = {
+  __typename?: 'PaymentStatus';
+  amount: Scalars['Float']['output'];
+  createdAt?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  paymentMethod?: Maybe<Scalars['String']['output']>;
+  status: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
 };
 
 export enum PersonTypes {
@@ -2277,6 +2788,7 @@ export type PresupuestoVsVenta = {
   diaActual: Scalars['Int']['output'];
   presupuestoActual: Scalars['Float']['output'];
   presupuestoAnterior: Scalars['Float']['output'];
+  user?: Maybe<User>;
   userId: Scalars['String']['output'];
   ventaAcumuladaActual: Scalars['Float']['output'];
   ventaAcumuladaAnterior: Scalars['Float']['output'];
@@ -2284,6 +2796,94 @@ export type PresupuestoVsVenta = {
   ventaAcumuladaHastaMismoDiaAnterior: Scalars['Float']['output'];
   ventaHoyActual: Scalars['Float']['output'];
   ventaMismoDiaAnterior: Scalars['Float']['output'];
+};
+
+export type PriceRule = {
+  __typename?: 'PriceRule';
+  clientType: ClientType;
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['ID']['output'];
+  percentage: Scalars['Float']['output'];
+  product: Product;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type Product = {
+  __typename?: 'Product';
+  active: Scalars['Boolean']['output'];
+  basePrice: Scalars['Float']['output'];
+  calculatedPrice?: Maybe<Scalars['Float']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  description: Scalars['String']['output'];
+  /** Porcentaje de descuento (0-100) */
+  discountPercentage?: Maybe<Scalars['Float']['output']>;
+  file?: Maybe<FileInfo>;
+  id: Scalars['ID']['output'];
+  isDiscount: Scalars['Boolean']['output'];
+  photos?: Maybe<Array<ProductPhoto>>;
+  priceRules?: Maybe<Array<PriceRule>>;
+  reference: Scalars['String']['output'];
+  /** Productos relacionados */
+  relatedProducts?: Maybe<Array<Product>>;
+  subclasses?: Maybe<Array<SubClass>>;
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ProductFeatured = {
+  __typename?: 'ProductFeatured';
+  /** Indica si el destaque está activo */
+  active: Scalars['Boolean']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Monto fijo de descuento en la moneda base */
+  discountAmount?: Maybe<Scalars['Float']['output']>;
+  /** Porcentaje de descuento (0-100) */
+  discountPercentage?: Maybe<Scalars['Float']['output']>;
+  /** Fecha de fin del destaque */
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  finalPrice: Scalars['Float']['output'];
+  id: Scalars['ID']['output'];
+  product: Product;
+  /** Fecha de inicio del destaque */
+  startDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Tipo de destaque del producto */
+  type: ProductFeaturedType;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ProductFeaturedBaseInput = {
+  /** Indica si está activo */
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Monto fijo de descuento */
+  discountAmount?: InputMaybe<Scalars['Float']['input']>;
+  /** Porcentaje de descuento (0-100) */
+  discountPercentage?: InputMaybe<Scalars['Float']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  productId: Scalars['ID']['input'];
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+  /** Tipo de destaque */
+  type: ProductFeaturedType;
+};
+
+/** Tipos de destaque disponibles para los productos destacados */
+export enum ProductFeaturedType {
+  Nuevo = 'NUEVO',
+  Oferta = 'OFERTA',
+  Principal = 'PRINCIPAL',
+  TopVentas = 'TOP_VENTAS'
+}
+
+export type ProductPhoto = {
+  __typename?: 'ProductPhoto';
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  file?: Maybe<FileInfo>;
+  id: Scalars['ID']['output'];
+  product: Product;
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type Profile = {
@@ -2395,6 +2995,9 @@ export type Query = {
   bundle: WsBatch;
   bundles: Array<WsBatch>;
   bundlesCount: MetadataPagination;
+  cart: Cart;
+  carts: Array<Cart>;
+  cartsCount: MetadataPagination;
   cellsByClass: Array<CellClass>;
   cities: Array<City>;
   city: City;
@@ -2424,16 +3027,22 @@ export type Query = {
   fichaTecnicasCount: MetadataPagination;
   file: FileInfo;
   findAll: Array<UserKey>;
+  findAllByClass: Array<Product>;
+  findAllByClassCount?: Maybe<MetadataPagination>;
   findAllFacturaCliente: Array<FletesWithDocument>;
+  findAllPayment: Array<Payment>;
   findAllVisitDashboard: VisitDashboardModel;
   findBundleInStop?: Maybe<WsBatch>;
   findOne: UserKey;
+  findOneClientNumberDocument?: Maybe<Client>;
   findOneFacturaClienteByCode: FindOneFacturaClienteByCode;
+  findOneReferencia?: Maybe<FichaTecnica>;
   findSeachCotizacion: Scalars['Boolean']['output'];
   findStatisticStatusProyect: Array<ProyectoEmbudoDto>;
   findUtilidadReal: UtilidadRealModel;
   functionalities: FunctionalityModel;
   getDataDashboard: Array<DashboardDataModal>;
+  getPaymentStatus: PaymentStatus;
   getVentasTop20Clientes: Array<VentasTrabajadorCliente>;
   group: WsGroup;
   groups: Array<WsGroup>;
@@ -2450,6 +3059,11 @@ export type Query = {
   notificationConfigsCount: MetadataPagination;
   notifications: Array<Notification>;
   notificationsCount: MetadataPagination;
+  obtenerStockReferencia?: Maybe<ReferenciaResponse>;
+  oderAdmin: Order;
+  order: Order;
+  orders: Array<Order>;
+  ordersCount: MetadataPagination;
   pageLink: PageLink;
   pageLinks: Array<PageLink>;
   pageLinksCount: MetadataPagination;
@@ -2463,6 +3077,12 @@ export type Query = {
   presupuestoVentaPorUsuario?: Maybe<PresupuestoVsVenta>;
   presupuestos: Array<Presupuesto>;
   presupuestosCount: MetadataPagination;
+  product: Product;
+  productFeatured: ProductFeatured;
+  productFeatureds: Array<ProductFeatured>;
+  productFeaturedsCount: MetadataPagination;
+  products: Array<Product>;
+  productsCount: MetadataPagination;
   profile: Profile;
   profiles: Array<Profile>;
   profilesCount: MetadataPagination;
@@ -2476,6 +3096,7 @@ export type Query = {
   referenciaProyecto: ReferenciaProyecto;
   referenciaProyectos: Array<ReferenciaProyecto>;
   referenciaProyectosCount: MetadataPagination;
+  relatedProducts: Array<Product>;
   revalidate: AuthResponse;
   role: Role;
   roleFx: RoleFx;
@@ -2488,8 +3109,15 @@ export type Query = {
   sesiones: Array<WsSesion>;
   sesionesCount: MetadataPagination;
   stock: Stock;
+  stockByReferencia?: Maybe<Stock>;
   stocks: Array<Stock>;
   stocksCount: MetadataPagination;
+  storeClient: StoreClient;
+  storeClients: Array<StoreClient>;
+  storeClientsCount: MetadataPagination;
+  storeReview: StoreReview;
+  storeReviews: Array<StoreReview>;
+  storeReviewsCount: MetadataPagination;
   task: Task;
   taskComment: TaskComment;
   tasks: Array<Task>;
@@ -2513,6 +3141,7 @@ export type Query = {
   visitType: VisitType;
   visitTypes: Array<VisitType>;
   visitTypesCount: MetadataPagination;
+  visitasPorVendedor: Array<VisitsPerWorker>;
   visits: Array<Visit>;
   visitsCount: MetadataPagination;
 };
@@ -2662,6 +3291,25 @@ export type QueryBundlesCountArgs = {
   orderBy?: InputMaybe<Array<FindWsBatchOrderBy>>;
   pagination?: InputMaybe<Pagination>;
   where?: InputMaybe<FindWsBatchWhere>;
+};
+
+
+export type QueryCartArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryCartsArgs = {
+  orderBy?: InputMaybe<Array<FindCartOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindCartWhere>;
+};
+
+
+export type QueryCartsCountArgs = {
+  orderBy?: InputMaybe<Array<FindCartOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindCartWhere>;
 };
 
 
@@ -2837,8 +3485,29 @@ export type QueryFindAllArgs = {
 };
 
 
+export type QueryFindAllByClassArgs = {
+  orderBy?: InputMaybe<Array<FindProductOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  subClassId?: InputMaybe<Scalars['String']['input']>;
+  where?: InputMaybe<FindProductWhere>;
+};
+
+
+export type QueryFindAllByClassCountArgs = {
+  orderBy?: InputMaybe<Array<FindProductOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  subClassId?: InputMaybe<Scalars['String']['input']>;
+  where?: InputMaybe<FindProductWhere>;
+};
+
+
 export type QueryFindAllFacturaClienteArgs = {
   input: FacturaPorClienteDto;
+};
+
+
+export type QueryFindAllPaymentArgs = {
+  orderId: Scalars['String']['input'];
 };
 
 
@@ -2847,8 +3516,18 @@ export type QueryFindOneArgs = {
 };
 
 
+export type QueryFindOneClientNumberDocumentArgs = {
+  nit: Scalars['String']['input'];
+};
+
+
 export type QueryFindOneFacturaClienteByCodeArgs = {
   code: Scalars['String']['input'];
+};
+
+
+export type QueryFindOneReferenciaArgs = {
+  referencia: Scalars['String']['input'];
 };
 
 
@@ -2869,6 +3548,11 @@ export type QueryFindUtilidadRealArgs = {
 
 export type QueryGetDataDashboardArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type QueryGetPaymentStatusArgs = {
+  transactionId: Scalars['String']['input'];
 };
 
 
@@ -2956,6 +3640,35 @@ export type QueryNotificationsCountArgs = {
 };
 
 
+export type QueryObtenerStockReferenciaArgs = {
+  referencia: Scalars['String']['input'];
+};
+
+
+export type QueryOderAdminArgs = {
+  orderId: Scalars['String']['input'];
+};
+
+
+export type QueryOrderArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryOrdersArgs = {
+  orderBy?: InputMaybe<Array<FindOrderOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindOrderWhere>;
+};
+
+
+export type QueryOrdersCountArgs = {
+  orderBy?: InputMaybe<Array<FindOrderOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindOrderWhere>;
+};
+
+
 export type QueryPageLinkArgs = {
   id: Scalars['ID']['input'];
 };
@@ -3022,6 +3735,46 @@ export type QueryPresupuestosCountArgs = {
   orderBy?: InputMaybe<Array<FindPresupuestoOrderBy>>;
   pagination?: InputMaybe<Pagination>;
   where?: InputMaybe<FindPresupuestoWhere>;
+};
+
+
+export type QueryProductArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryProductFeaturedArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryProductFeaturedsArgs = {
+  orderBy?: InputMaybe<Array<FindProductFeaturedOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindProductFeaturedWhere>;
+};
+
+
+export type QueryProductFeaturedsCountArgs = {
+  orderBy?: InputMaybe<Array<FindProductFeaturedOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindProductFeaturedWhere>;
+};
+
+
+export type QueryProductsArgs = {
+  orderBy?: InputMaybe<Array<FindProductOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  subClassId?: InputMaybe<Scalars['String']['input']>;
+  where?: InputMaybe<FindProductWhere>;
+};
+
+
+export type QueryProductsCountArgs = {
+  orderBy?: InputMaybe<Array<FindProductOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  subClassId?: InputMaybe<Scalars['String']['input']>;
+  where?: InputMaybe<FindProductWhere>;
 };
 
 
@@ -3098,6 +3851,13 @@ export type QueryReferenciaProyectosCountArgs = {
 };
 
 
+export type QueryRelatedProductsArgs = {
+  excludeProductId?: InputMaybe<Scalars['ID']['input']>;
+  limit?: Scalars['Float']['input'];
+  subclassIds: Array<Scalars['ID']['input']>;
+};
+
+
 export type QueryRoleArgs = {
   id: Scalars['ID']['input'];
 };
@@ -3157,6 +3917,11 @@ export type QueryStockArgs = {
 };
 
 
+export type QueryStockByReferenciaArgs = {
+  referencia: Scalars['String']['input'];
+};
+
+
 export type QueryStocksArgs = {
   orderBy?: InputMaybe<Array<FindStockTypeOrderBy>>;
   pagination?: InputMaybe<Pagination>;
@@ -3168,6 +3933,44 @@ export type QueryStocksCountArgs = {
   orderBy?: InputMaybe<Array<FindStockTypeOrderBy>>;
   pagination?: InputMaybe<Pagination>;
   where?: InputMaybe<FindStockTypeWhere>;
+};
+
+
+export type QueryStoreClientArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryStoreClientsArgs = {
+  orderBy?: InputMaybe<Array<FindStoreClientOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindStoreClientWhere>;
+};
+
+
+export type QueryStoreClientsCountArgs = {
+  orderBy?: InputMaybe<Array<FindStoreClientOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindStoreClientWhere>;
+};
+
+
+export type QueryStoreReviewArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryStoreReviewsArgs = {
+  orderBy?: InputMaybe<Array<FindStoreReviewOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindStoreReviewWhere>;
+};
+
+
+export type QueryStoreReviewsCountArgs = {
+  orderBy?: InputMaybe<Array<FindStoreReviewOrderBy>>;
+  pagination?: InputMaybe<Pagination>;
+  where?: InputMaybe<FindStoreReviewWhere>;
 };
 
 
@@ -3301,6 +4104,12 @@ export type QueryVisitTypesCountArgs = {
 };
 
 
+export type QueryVisitasPorVendedorArgs = {
+  workerNumber: Scalars['String']['input'];
+  year: Scalars['Float']['input'];
+};
+
+
 export type QueryVisitsArgs = {
   orderBy?: InputMaybe<Array<FindVisitOrderBy>>;
   pagination?: InputMaybe<Pagination>;
@@ -3336,6 +4145,14 @@ export type ReferenciaProyecto = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type ReferenciaResponse = {
+  __typename?: 'ReferenciaResponse';
+  Costo?: Maybe<Scalars['Float']['output']>;
+  Descripcion: Scalars['String']['output'];
+  Stock?: Maybe<Scalars['Int']['output']>;
+  referencia: Scalars['String']['output'];
+};
+
 export enum ResendOption {
   Fallidos = 'FALLIDOS',
   FallidosPendientes = 'FALLIDOS_PENDIENTES',
@@ -3350,6 +4167,12 @@ export type ResponseDto = {
   message: Scalars['String']['output'];
   /** Indica si la operación fue exitosa */
   success: Scalars['Boolean']['output'];
+};
+
+export type ResponsePasarelaModel = {
+  __typename?: 'ResponsePasarelaModel';
+  transactionId: Scalars['String']['output'];
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 export type Role = {
@@ -3514,6 +4337,60 @@ export type Stock = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type StoreClient = {
+  __typename?: 'StoreClient';
+  addresses?: Maybe<Array<StoreClientAddress>>;
+  clientKind: ClientKind;
+  clientType: ClientType;
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  email: Scalars['String']['output'];
+  firstName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  identificationType?: Maybe<UserDocumentTypes>;
+  isRentencion: Scalars['Boolean']['output'];
+  isVerifiedEmail: Scalars['Boolean']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
+  lastPasswordTime?: Maybe<Scalars['DateTime']['output']>;
+  nit: Scalars['String']['output'];
+  phone?: Maybe<Scalars['String']['output']>;
+  rut: FileInfo;
+  status: ClientStatus;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type StoreClientAddress = {
+  __typename?: 'StoreClientAddress';
+  address: Scalars['String']['output'];
+  city: Scalars['String']['output'];
+  client: StoreClient;
+  complement?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['ID']['output'];
+  isDefault: Scalars['Boolean']['output'];
+  latitude?: Maybe<Scalars['Float']['output']>;
+  longitude?: Maybe<Scalars['Float']['output']>;
+  name: Scalars['String']['output'];
+  reference?: Maybe<Scalars['String']['output']>;
+  state: Scalars['String']['output'];
+  status: AddressStatus;
+  updatedAt: Scalars['DateTime']['output'];
+  zipCode: Scalars['String']['output'];
+};
+
+export type StoreReview = {
+  __typename?: 'StoreReview';
+  client: StoreClient;
+  comment?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['ID']['output'];
+  product: Product;
+  rating: Scalars['Float']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type StringFilter = {
   _contains?: InputMaybe<Scalars['String']['input']>;
   _endswith?: InputMaybe<Scalars['String']['input']>;
@@ -3538,6 +4415,7 @@ export type SubClass = {
   description: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+  products?: Maybe<Array<Product>>;
   status: SubClassStatus;
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -3639,6 +4517,7 @@ export enum TypeParameterEnum {
 
 export enum TypeWorker {
   Externo = 'externo',
+  Freelance = 'freelance',
   Interno = 'interno'
 }
 
@@ -3647,6 +4526,7 @@ export type UpdateBundleInput = {
   createdByUserAtId?: InputMaybe<Scalars['String']['input']>;
   deleteFile?: InputMaybe<Scalars['Boolean']['input']>;
   descripcion?: InputMaybe<Scalars['String']['input']>;
+  estado?: InputMaybe<WsBatchStatus>;
   fileHtmlId?: InputMaybe<Scalars['String']['input']>;
   fileId?: InputMaybe<Scalars['String']['input']>;
   groupId?: InputMaybe<Scalars['String']['input']>;
@@ -3655,6 +4535,13 @@ export type UpdateBundleInput = {
   nombre?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<TypeBundleEnum>;
   variables?: InputMaybe<Array<KeyValuePairInput>>;
+};
+
+export type UpdateCartInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  clientId?: InputMaybe<Scalars['ID']['input']>;
+  id: Scalars['ID']['input'];
+  items?: InputMaybe<Array<CreateCartItemInput>>;
 };
 
 export type UpdateCellInput = {
@@ -3684,6 +4571,22 @@ export type UpdateClassInput = {
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<ClassStatus>;
+};
+
+export type UpdateClientAddressInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  clientId?: InputMaybe<Scalars['String']['input']>;
+  complement?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  isDefault?: InputMaybe<Scalars['Boolean']['input']>;
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  longitude?: InputMaybe<Scalars['Float']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  reference?: InputMaybe<Scalars['String']['input']>;
+  state?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<AddressStatus>;
+  zipCode?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateClientContactInput = {
@@ -3771,6 +4674,7 @@ export type UpdateFletesInput = {
   contactClient?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
+  isTienda?: InputMaybe<Scalars['Boolean']['input']>;
   numberDocument?: InputMaybe<Scalars['String']['input']>;
   numberGuia?: InputMaybe<Scalars['String']['input']>;
   oip?: InputMaybe<Scalars['Float']['input']>;
@@ -3840,6 +4744,12 @@ export type UpdateNotificationInput = {
   wssRecipient?: InputMaybe<WssRecipient>;
 };
 
+export type UpdateOrderInput = {
+  dummy?: InputMaybe<Scalars['ID']['input']>;
+  id: Scalars['ID']['input'];
+  status?: InputMaybe<OrderStatus>;
+};
+
 export type UpdateParametersInput = {
   codigo?: InputMaybe<Scalars['String']['input']>;
   descripcion?: InputMaybe<Scalars['String']['input']>;
@@ -3870,6 +4780,35 @@ export type UpdatePresupuestoInput = {
   mes?: InputMaybe<Scalars['Float']['input']>;
   valor?: InputMaybe<Scalars['Float']['input']>;
   workerId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateProductFeaturedInput = {
+  /** Indica si está activo */
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Monto fijo de descuento */
+  discountAmount?: InputMaybe<Scalars['Float']['input']>;
+  /** Porcentaje de descuento (0-100) */
+  discountPercentage?: InputMaybe<Scalars['Float']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  /** ID del producto al que se aplica el destaque */
+  id: Scalars['ID']['input'];
+  productId?: InputMaybe<Scalars['ID']['input']>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+  /** Tipo de destaque */
+  type?: InputMaybe<ProductFeaturedType>;
+};
+
+export type UpdateProductInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  basePrice?: InputMaybe<Scalars['Float']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  fileIds?: InputMaybe<Array<Scalars['String']['input']>>;
+  id: Scalars['String']['input'];
+  mainPhoto?: InputMaybe<Scalars['String']['input']>;
+  reference?: InputMaybe<Scalars['String']['input']>;
+  rulePrice?: InputMaybe<Array<CreatePriceRuleInput>>;
+  subclassIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateProfileInput = {
@@ -3967,6 +4906,31 @@ export type UpdateStockInput = {
   stcMin?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type UpdateStoreClientInput = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  clientKind?: InputMaybe<ClientKind>;
+  clientType?: InputMaybe<ClientType>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  identificationType?: InputMaybe<UserDocumentTypes>;
+  isRentencion?: InputMaybe<Scalars['Boolean']['input']>;
+  isVerifiedEmail?: InputMaybe<Scalars['Boolean']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  nit?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  rutId?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<ClientStatus>;
+};
+
+export type UpdateStoreReviewInput = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  productId?: InputMaybe<Scalars['ID']['input']>;
+  rating?: InputMaybe<Scalars['Float']['input']>;
+};
+
 export type UpdateSubClassInput = {
   classId?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -4049,6 +5013,8 @@ export type UpdateUserInput = {
   secondSurname?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<UserTypes>;
   typeWoker?: InputMaybe<TypeWorker>;
+  valueFreelance?: InputMaybe<Scalars['Int']['input']>;
+  valueMinVisit?: InputMaybe<Scalars['Int']['input']>;
   valueTransport?: InputMaybe<Scalars['Float']['input']>;
 };
 
@@ -4124,6 +5090,8 @@ export type User = {
   updatedAt: Scalars['DateTime']['output'];
   userRoles: Array<Role>;
   userRolesFx: Array<RoleFx>;
+  valueFreelance?: Maybe<Scalars['Float']['output']>;
+  valueMinVisit?: Maybe<Scalars['Float']['output']>;
   valueTransport?: Maybe<Scalars['Float']['output']>;
 };
 
@@ -4259,6 +5227,12 @@ export enum VisitTypeStatusEnum {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE'
 }
+
+export type VisitsPerWorker = {
+  __typename?: 'VisitsPerWorker';
+  numero_mes: Scalars['Int']['output'];
+  visitas: Scalars['Int']['output'];
+};
 
 export type WsBatch = {
   __typename?: 'WsBatch';
@@ -4577,6 +5551,13 @@ export type CellsByNitQueryVariables = Exact<{
 
 
 export type CellsByNitQuery = { __typename?: 'Query', Cells: Array<{ __typename?: 'WsCell', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, celular: string, region: string, nit?: string | null, nombre?: string | null, apellido?: string | null, direccion?: string | null, email?: string | null, ciudad?: string | null, empresa?: string | null, verify?: boolean | null, tipoCliente?: TypeClientEnum | null, type?: CellTpeStatusEmun | null, status: CellStatusEmun, fullName: string }> };
+
+export type FindOneClientNumberDocumentQueryVariables = Exact<{
+  nit: Scalars['String']['input'];
+}>;
+
+
+export type FindOneClientNumberDocumentQuery = { __typename?: 'Query', findOneClientNumberDocument?: { __typename?: 'Client', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name: string, numberDocument: string, email: string, telefono?: string | null, address?: string | null, descripcion?: string | null, type?: TypeClientEnum | null, vertical?: string | null, celular: string, contact?: Array<{ __typename?: 'ClientContact', id: string, createdAt: any, updatedAt: any, deletedAt?: any | null, name: string, celular: string, email: string, position: string, telefono?: string | null }> | null } | null };
 
 export type ClientContactsQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<FindClientContactOrderBy> | FindClientContactOrderBy>;
@@ -4951,6 +5932,14 @@ export type RemoveSubordinateMutationVariables = Exact<{
 
 
 export type RemoveSubordinateMutation = { __typename?: 'Mutation', removeSubordinate: { __typename?: 'User', id: string } };
+
+export type VisitasPorVendedorQueryVariables = Exact<{
+  year: Scalars['Float']['input'];
+  workerNumber: Scalars['String']['input'];
+}>;
+
+
+export type VisitasPorVendedorQuery = { __typename?: 'Query', visitasPorVendedor: Array<{ __typename?: 'VisitsPerWorker', numero_mes: number, visitas: number }> };
 
 export type VisitsQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<FindVisitOrderBy> | FindVisitOrderBy>;
@@ -6346,6 +7335,69 @@ export type CellsByNitQueryHookResult = ReturnType<typeof useCellsByNitQuery>;
 export type CellsByNitLazyQueryHookResult = ReturnType<typeof useCellsByNitLazyQuery>;
 export type CellsByNitSuspenseQueryHookResult = ReturnType<typeof useCellsByNitSuspenseQuery>;
 export type CellsByNitQueryResult = Apollo.QueryResult<CellsByNitQuery, CellsByNitQueryVariables>;
+export const FindOneClientNumberDocumentDocument = gql`
+    query FindOneClientNumberDocument($nit: String!) {
+  findOneClientNumberDocument(nit: $nit) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    numberDocument
+    email
+    telefono
+    address
+    descripcion
+    type
+    vertical
+    celular
+    contact {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      name
+      celular
+      email
+      position
+      telefono
+    }
+  }
+}
+    `;
+
+/**
+ * __useFindOneClientNumberDocumentQuery__
+ *
+ * To run a query within a React component, call `useFindOneClientNumberDocumentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindOneClientNumberDocumentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindOneClientNumberDocumentQuery({
+ *   variables: {
+ *      nit: // value for 'nit'
+ *   },
+ * });
+ */
+export function useFindOneClientNumberDocumentQuery(baseOptions: Apollo.QueryHookOptions<FindOneClientNumberDocumentQuery, FindOneClientNumberDocumentQueryVariables> & ({ variables: FindOneClientNumberDocumentQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindOneClientNumberDocumentQuery, FindOneClientNumberDocumentQueryVariables>(FindOneClientNumberDocumentDocument, options);
+      }
+export function useFindOneClientNumberDocumentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneClientNumberDocumentQuery, FindOneClientNumberDocumentQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindOneClientNumberDocumentQuery, FindOneClientNumberDocumentQueryVariables>(FindOneClientNumberDocumentDocument, options);
+        }
+export function useFindOneClientNumberDocumentSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<FindOneClientNumberDocumentQuery, FindOneClientNumberDocumentQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<FindOneClientNumberDocumentQuery, FindOneClientNumberDocumentQueryVariables>(FindOneClientNumberDocumentDocument, options);
+        }
+export type FindOneClientNumberDocumentQueryHookResult = ReturnType<typeof useFindOneClientNumberDocumentQuery>;
+export type FindOneClientNumberDocumentLazyQueryHookResult = ReturnType<typeof useFindOneClientNumberDocumentLazyQuery>;
+export type FindOneClientNumberDocumentSuspenseQueryHookResult = ReturnType<typeof useFindOneClientNumberDocumentSuspenseQuery>;
+export type FindOneClientNumberDocumentQueryResult = Apollo.QueryResult<FindOneClientNumberDocumentQuery, FindOneClientNumberDocumentQueryVariables>;
 export const ClientContactsDocument = gql`
     query ClientContacts($orderBy: [FindClientContactOrderBy!], $pagination: Pagination, $where: FindClientContactWhere) {
   clientContacts(orderBy: $orderBy, pagination: $pagination, where: $where) {
@@ -9234,6 +10286,48 @@ export function useRemoveSubordinateMutation(baseOptions?: Apollo.MutationHookOp
 export type RemoveSubordinateMutationHookResult = ReturnType<typeof useRemoveSubordinateMutation>;
 export type RemoveSubordinateMutationResult = Apollo.MutationResult<RemoveSubordinateMutation>;
 export type RemoveSubordinateMutationOptions = Apollo.BaseMutationOptions<RemoveSubordinateMutation, RemoveSubordinateMutationVariables>;
+export const VisitasPorVendedorDocument = gql`
+    query VisitasPorVendedor($year: Float!, $workerNumber: String!) {
+  visitasPorVendedor(year: $year, workerNumber: $workerNumber) {
+    numero_mes
+    visitas
+  }
+}
+    `;
+
+/**
+ * __useVisitasPorVendedorQuery__
+ *
+ * To run a query within a React component, call `useVisitasPorVendedorQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVisitasPorVendedorQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVisitasPorVendedorQuery({
+ *   variables: {
+ *      year: // value for 'year'
+ *      workerNumber: // value for 'workerNumber'
+ *   },
+ * });
+ */
+export function useVisitasPorVendedorQuery(baseOptions: Apollo.QueryHookOptions<VisitasPorVendedorQuery, VisitasPorVendedorQueryVariables> & ({ variables: VisitasPorVendedorQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<VisitasPorVendedorQuery, VisitasPorVendedorQueryVariables>(VisitasPorVendedorDocument, options);
+      }
+export function useVisitasPorVendedorLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VisitasPorVendedorQuery, VisitasPorVendedorQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<VisitasPorVendedorQuery, VisitasPorVendedorQueryVariables>(VisitasPorVendedorDocument, options);
+        }
+export function useVisitasPorVendedorSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<VisitasPorVendedorQuery, VisitasPorVendedorQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<VisitasPorVendedorQuery, VisitasPorVendedorQueryVariables>(VisitasPorVendedorDocument, options);
+        }
+export type VisitasPorVendedorQueryHookResult = ReturnType<typeof useVisitasPorVendedorQuery>;
+export type VisitasPorVendedorLazyQueryHookResult = ReturnType<typeof useVisitasPorVendedorLazyQuery>;
+export type VisitasPorVendedorSuspenseQueryHookResult = ReturnType<typeof useVisitasPorVendedorSuspenseQuery>;
+export type VisitasPorVendedorQueryResult = Apollo.QueryResult<VisitasPorVendedorQuery, VisitasPorVendedorQueryVariables>;
 export const VisitsDocument = gql`
     query Visits($orderBy: [FindVisitOrderBy!], $where: FindVisitWhere, $pagination: Pagination) {
   visits(orderBy: $orderBy, where: $where, pagination: $pagination) {

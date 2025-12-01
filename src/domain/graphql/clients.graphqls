@@ -166,3 +166,31 @@ query CellsByNit($where: FindCellWhere) {
     fullName
   }
 }
+query FindOneClientNumberDocument($nit: String!) {
+  findOneClientNumberDocument(nit: $nit) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    numberDocument
+    email
+    telefono
+    address
+    descripcion
+    type
+    vertical
+    celular
+    contact {
+      id
+      createdAt
+      updatedAt
+      deletedAt
+      name
+      celular
+      email
+      position
+      telefono
+    }
+  }
+}

@@ -94,3 +94,10 @@ mutation RemoveSubordinate($managerId: String!, $subordinateId: String!) {
     id
   }
 }
+
+query VisitasPorVendedor($year: Float!, $workerNumber: String!) {
+  visitasPorVendedor(year: $year, workerNumber: $workerNumber) {
+    numero_mes
+    visitas
+  }
+}

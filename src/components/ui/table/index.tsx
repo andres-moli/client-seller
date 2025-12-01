@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ReactNode } from "react";
 import Button from "../button/Button";
 
@@ -45,6 +46,7 @@ interface ButtonTableProps {
 // ButtonTable Component
 const ButtonTable: React.FC<ButtonTableProps> = ({ onClick, children, className, disabled }) => {
   return (
+    // @ts-ignore
     <Button
       disabled={disabled}
       onClick={onClick}

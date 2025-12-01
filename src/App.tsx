@@ -31,6 +31,8 @@ import { LoagerPage } from "./pages/AuthPages/looager";
 import IndexClientView from "./pages/client/indexClient";
 import VentasPage from "./pages/ventas";
 import ClassesPage from "./pages/class";
+import BiTrabajadorIndex from "./pages/VITRABAJADOR/BiTrabajadorIndex";
+import BiTrabajadorClientIndex from "./pages/VITRABAJADOR/BiTabajadorClientIndex";
 
 export default function App() {
   return (
@@ -57,6 +59,8 @@ export default function App() {
             <Route path="/ventas" element={<VentasPage />} />
             <Route path="/class" element={<ClassesPage />} />
             <Route path="/blank" element={<Blank />} />
+            <Route path="vi-trabajador" element={<BiTrabajadorIndex />} />
+            <Route path="vi-trabajador-client/:clienteId" element={<BiTrabajadorClientIndex />} />
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
