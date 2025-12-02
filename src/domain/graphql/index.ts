@@ -1016,6 +1016,11 @@ export type FindClientWhere = {
 
 export type FindCotizacionOrderBy = {
   fecha?: InputMaybe<OrderTypes>;
+  nitCliente?: InputMaybe<OrderTypes>;
+  nombreCliente?: InputMaybe<OrderTypes>;
+  numeroCotizacion?: InputMaybe<OrderTypes>;
+  status?: InputMaybe<OrderTypes>;
+  valor?: InputMaybe<OrderTypes>;
 };
 
 export type FindCotizacionWhere = {
