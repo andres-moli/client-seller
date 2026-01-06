@@ -33,6 +33,8 @@ import VentasPage from "./pages/ventas";
 import ClassesPage from "./pages/class";
 import BiTrabajadorIndex from "./pages/VITRABAJADOR/BiTrabajadorIndex";
 import BiTrabajadorClientIndex from "./pages/VITRABAJADOR/BiTabajadorClientIndex";
+import CompraPage from "./pages/compra";
+import { CreateCotizacionView } from "./pages/cotizacion/CreateCotizacionView";
 
 export default function App() {
   return (
@@ -61,7 +63,8 @@ export default function App() {
             <Route path="/blank" element={<Blank />} />
             <Route path="vi-trabajador" element={<BiTrabajadorIndex />} />
             <Route path="vi-trabajador-client/:clienteId" element={<BiTrabajadorClientIndex />} />
-
+            <Route path="/compra" element={<CompraPage/>} />
+            <Route path="/create-cotizacion" element={<CreateCotizacionView />} />
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
 

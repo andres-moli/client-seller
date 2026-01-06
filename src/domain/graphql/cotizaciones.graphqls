@@ -81,3 +81,8 @@ mutation UpdateDetalleCotizacion($updateInput: UpdateCotizacionDetalleInput!) {
 mutation ResendCotizacionByNumber($input: CotizacionResendByNumber!) {
   resendCotizacionByNumber(input: $input)
 }
+mutation createCotizacionIntranet($input: CreateCotizacionIntranerInput!) {
+  createCotizacionIntranet(input: $input) {
+    id
+  }
+}

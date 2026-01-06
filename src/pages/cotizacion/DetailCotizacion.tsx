@@ -51,7 +51,7 @@ function calcularTotalesYUtilidad(detalles: DetalleCotizacion[]): ResultadosCalc
   const subtotalVenta = detallesConCalculos.reduce((sum, detalle) => sum + detalle.subtotalVenta, 0);
   const utilidadBruta = subtotalVenta - subtotalCosto;
   const porcentajeUtilidad = subtotalCosto > 0 
-    ? (1 - (subtotalCosto / subtotalVenta)) * 100 
+    ? ((utilidadBruta / subtotalCosto)) * 100 
     : 0;
 
   return {
@@ -82,8 +82,9 @@ const optionsStatus: Option[] = Object.values(CotizacionStatusEnum).map((status)
 const calcularPorcentajeUtilidad = (costo: number, venta: number): number => {
   if (costo <= 0) return 0;
   const utilidad = venta - costo;
-  return Number(((utilidad / venta) * 100).toFixed(2));
+  return Number(((utilidad / costo) * 100).toFixed(2));
 };
+
 
 export const DetailCotizacionView: React.FC <DetailCotizacionViewProps> = ({ id }) => {
     const [status, setStatus] = useState<string>()

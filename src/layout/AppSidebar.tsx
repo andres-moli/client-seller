@@ -19,7 +19,7 @@ import {
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import SidebarWidget from "./SidebarWidget";
-import { BeerIcon, Brain, ServerCrash } from "lucide-react";
+import { BeerIcon, Brain, ServerCrash, ShoppingCartIcon } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -59,6 +59,11 @@ const navItems: NavItem[] = [
     icon: <UserCircleIcon />,
     name: "Clientes",
     path: "/client",
+  },
+  {
+    icon: <ShoppingCartIcon />, 
+    name: "Compras",
+    path: "/compra",
   },
   {
     icon: <ServerCrash />,

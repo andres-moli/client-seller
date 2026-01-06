@@ -249,6 +249,7 @@ export type Cotizacion = {
   fechaVersion?: Maybe<Scalars['DateTime']['output']>;
   fechaVersionString?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  isIntraner?: Maybe<Scalars['Boolean']['output']>;
   nitCliente: Scalars['String']['output'];
   nombreCliente: Scalars['String']['output'];
   nombreVendedor: Scalars['String']['output'];
@@ -392,6 +393,11 @@ export type CreateCotizacionInput = {
   numeroCotizacion: Scalars['String']['input'];
   valor: Scalars['Float']['input'];
   vendedor: Scalars['String']['input'];
+};
+
+export type CreateCotizacionIntranerInput = {
+  cotizacion: CreateCotizacionInput;
+  detalle: Array<DetalleCotizacionInput>;
 };
 
 export type CreateDocumentTypeInput = {
@@ -810,6 +816,19 @@ export type DetalleCotizacion = {
   uuid: Scalars['Float']['output'];
   valorCosto: Scalars['Float']['output'];
   valorVenta: Scalars['Float']['output'];
+};
+
+export type DetalleCotizacionInput = {
+  CANTIDAD: Scalars['Float']['input'];
+  DESCRIPCION: Scalars['String']['input'];
+  ID?: InputMaybe<Scalars['String']['input']>;
+  REFERENCIA: Scalars['String']['input'];
+  TIEMPO_ENTREGA?: InputMaybe<Scalars['String']['input']>;
+  TOTAL: Scalars['Float']['input'];
+  UNIDMED: Scalars['String']['input'];
+  UNIT_MEDIDA?: InputMaybe<Scalars['String']['input']>;
+  VCOSTO: Scalars['Float']['input'];
+  VVENTA: Scalars['Float']['input'];
 };
 
 export type DocumentType = {
@@ -1521,6 +1540,7 @@ export type Mutation = {
   createClientAddress: StoreClientAddress;
   createClientContact: ClientContact;
   createCotizacion: Cotizacion;
+  createCotizacionIntranet: Cotizacion;
   createDefaultRoles: Array<Role>;
   createDocumentType: DocumentType;
   createDummiesX: Array<Dummy>;
@@ -1782,6 +1802,11 @@ export type MutationCreateClientContactArgs = {
 
 export type MutationCreateCotizacionArgs = {
   createInput: CreateCotizacionInput;
+};
+
+
+export type MutationCreateCotizacionIntranetArgs = {
+  input: CreateCotizacionIntranerInput;
 };
 
 
@@ -5655,6 +5680,13 @@ export type ResendCotizacionByNumberMutationVariables = Exact<{
 
 export type ResendCotizacionByNumberMutation = { __typename?: 'Mutation', resendCotizacionByNumber: boolean };
 
+export type CreateCotizacionIntranetMutationVariables = Exact<{
+  input: CreateCotizacionIntranerInput;
+}>;
+
+
+export type CreateCotizacionIntranetMutation = { __typename?: 'Mutation', createCotizacionIntranet: { __typename?: 'Cotizacion', id: string } };
+
 export type FindAllFacturaClienteQueryVariables = Exact<{
   input: FacturaPorClienteDto;
 }>;
@@ -7951,6 +7983,39 @@ export function useResendCotizacionByNumberMutation(baseOptions?: Apollo.Mutatio
 export type ResendCotizacionByNumberMutationHookResult = ReturnType<typeof useResendCotizacionByNumberMutation>;
 export type ResendCotizacionByNumberMutationResult = Apollo.MutationResult<ResendCotizacionByNumberMutation>;
 export type ResendCotizacionByNumberMutationOptions = Apollo.BaseMutationOptions<ResendCotizacionByNumberMutation, ResendCotizacionByNumberMutationVariables>;
+export const CreateCotizacionIntranetDocument = gql`
+    mutation createCotizacionIntranet($input: CreateCotizacionIntranerInput!) {
+  createCotizacionIntranet(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateCotizacionIntranetMutationFn = Apollo.MutationFunction<CreateCotizacionIntranetMutation, CreateCotizacionIntranetMutationVariables>;
+
+/**
+ * __useCreateCotizacionIntranetMutation__
+ *
+ * To run a mutation, you first call `useCreateCotizacionIntranetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCotizacionIntranetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCotizacionIntranetMutation, { data, loading, error }] = useCreateCotizacionIntranetMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateCotizacionIntranetMutation(baseOptions?: Apollo.MutationHookOptions<CreateCotizacionIntranetMutation, CreateCotizacionIntranetMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCotizacionIntranetMutation, CreateCotizacionIntranetMutationVariables>(CreateCotizacionIntranetDocument, options);
+      }
+export type CreateCotizacionIntranetMutationHookResult = ReturnType<typeof useCreateCotizacionIntranetMutation>;
+export type CreateCotizacionIntranetMutationResult = Apollo.MutationResult<CreateCotizacionIntranetMutation>;
+export type CreateCotizacionIntranetMutationOptions = Apollo.BaseMutationOptions<CreateCotizacionIntranetMutation, CreateCotizacionIntranetMutationVariables>;
 export const FindAllFacturaClienteDocument = gql`
     query FindAllFacturaCliente($input: FacturaPorClienteDto!) {
   findAllFacturaCliente(input: $input) {

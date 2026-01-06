@@ -11,6 +11,7 @@ import Badge from "../../components/ui/badge/Badge";
 import { Pagination } from "../../components/ui/table/pagination";
 import { useUser } from "../../context/UserContext";
 import Input from "../../components/form/input/InputField";
+import Button from "../../components/ui/button/Button";
 
 export default function CotizacionTable() {
   const navigate  = useNavigate();
@@ -104,6 +105,9 @@ export default function CotizacionTable() {
         <div className="px-4 py-2 border-b border-gray-100 dark:border-white/[0.05] text-lg font-medium text-gray-900 dark:text-white">
           Cotizaciones del cliente
         </div>
+        <Button onClick={() => navigate("/create-cotizacion")} className="btn btn-primary btn-sm">
+          Crear Cotización
+        </Button>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left mt-6 px-6">
           <div className="text-left">
