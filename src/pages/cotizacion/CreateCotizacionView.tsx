@@ -65,24 +65,46 @@ export const toInteger = (value: number): number => {
 export const CreateCotizacionView = () => {
   /* ================= CLIENTE ================= */
   const {user} = useUser()
-  const [nit, setNit] = useState("");
+  const [clienteQuery, setClienteQuery] = useState("");
+  const [clientesOptions, setClientesOptions] = useState<Cliente[]>([]);
   const [cliente, setCliente] = useState<Cliente | null>(null);
   const [loadingCliente, setLoadingCliente] = useState(false);
+  const [showClienteDropdown, setShowClienteDropdown] = useState(false);
   const [createCotizacion] = useCreateCotizacionIntranetMutation();
-  const buscarCliente = async () => {
-    if (!nit) return;
-    setLoadingCliente(true);
-    try {
-      const res = await fetch(
-        `https://intranet.cytech.net.co:3003/brute-force/getClienteNit?nit=${nit}`
-      );
-      const data = await res.json();
-      setCliente(data?.[0] || null);
-    } catch (error) {
-      console.error("Error buscando cliente:", error);
-    } finally {
-      setLoadingCliente(false);
+
+  useEffect(() => {
+    if (clienteQuery.length < 2) {
+      setClientesOptions([]);
+      setShowClienteDropdown(false);
+      return;
     }
+
+    const buscarClientes = async () => {
+      setLoadingCliente(true);
+      try {
+        const res = await fetch(
+          `https://intranet.cytech.net.co:3003/brute-force/getClienteSearch?value=${encodeURIComponent(clienteQuery)}`
+        );
+        const data = await res.json();
+        setClientesOptions(Array.isArray(data) ? data : []);
+        setShowClienteDropdown(true);
+      } catch (error) {
+        console.error("Error buscando clientes:", error);
+        setClientesOptions([]);
+      } finally {
+        setLoadingCliente(false);
+      }
+    };
+
+    const delay = setTimeout(buscarClientes, 300);
+    return () => clearTimeout(delay);
+  }, [clienteQuery]);
+
+  const seleccionarCliente = (clienteSeleccionado: Cliente) => {
+    setCliente(clienteSeleccionado);
+    setClienteQuery(clienteSeleccionado.nombre);
+    setShowClienteDropdown(false);
+    setClientesOptions([]);
   };
 
   /* ================= PRODUCTOS ================= */
@@ -231,7 +253,7 @@ export const CreateCotizacionView = () => {
               DESCRIPCION: item.descripcion,
               REFERENCIA: item.referencia,
               TIEMPO_ENTREGA: item.entrega,
-              TOTAL: item.venta * item.cantidad,
+              TOTAL: toInteger(item.venta * item.cantidad),
               UNIDMED: item.unidad,
               UNIT_MEDIDA: item.unidad,
               VCOSTO: toInteger(item.costo),
@@ -286,33 +308,79 @@ export const CreateCotizacionView = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                 <Input
-                  placeholder="Buscar cliente por NIT"
+                  placeholder="Buscar cliente por nombre o NIT (mínimo 2 caracteres)"
                   className="pl-9"
-                  value={nit}
-                  onChange={e => setNit(e.target.value)}
-                  // @ts-ignore
-                  onKeyPress={(e) => e.key === 'Enter' && buscarCliente()}
+                  value={clienteQuery}
+                  onChange={e => setClienteQuery(e.target.value)}
                 />
-              </div>
-              <button
-                onClick={buscarCliente}
-                disabled={loadingCliente || !nit}
-                className="w-full px-4 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-              >
-                {loadingCliente ? (
-                  <Loader2 className="animate-spin" size={16} />
-                ) : (
-                  <Search size={16} />
+                {loadingCliente && (
+                  <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-gray-400" size={16} />
                 )}
-                {loadingCliente ? "Buscando..." : "Buscar Cliente"}
-              </button>
+              </div>
+
+              {/* Dropdown de opciones */}
+              {showClienteDropdown && clientesOptions.length > 0 && (
+                <div className="border rounded-lg overflow-hidden">
+                  <div className="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Resultados ({clientesOptions.length})
+                  </div>
+                  <div className="max-h-72 overflow-y-auto divide-y">
+                    {clientesOptions.map((clienteOption) => (
+                      <button
+                        key={clienteOption.nit}
+                        onClick={() => seleccionarCliente(clienteOption)}
+                        className="w-full text-left p-4 hover:bg-blue-50 transition-colors group"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <User size={14} className="text-gray-400" />
+                              <p className="font-medium text-gray-900">{clienteOption.nombre}</p>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1 line-clamp-2">{clienteOption.email}</p>
+                            <div className="flex items-center gap-4 mt-2 text-xs">
+                              <span className="flex items-center gap-1 text-gray-500">
+                                NIT: {clienteOption.nit}
+                              </span>
+                              <span className="flex items-center gap-1 text-gray-500">
+                                {clienteOption.celular}
+                              </span>
+                            </div>
+                          </div>
+                          <Plus size={16} className="text-gray-400 group-hover:text-blue-600" />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {clienteQuery.length >= 2 && !loadingCliente && clientesOptions.length === 0 && showClienteDropdown && (
+                <div className="text-center py-8 text-gray-500">
+                  <User className="mx-auto mb-2 text-gray-300" size={24} />
+                  <p>No se encontraron clientes</p>
+                  <p className="text-sm">Intenta con otros términos de búsqueda</p>
+                </div>
+              )}
             </div>
 
             {cliente && (
               <div className="mt-6 p-4 rounded-lg bg-blue-50 border border-blue-100">
-                <div className="flex items-center gap-2 mb-3">
-                  <User className="text-blue-600" size={16} />
-                  <p className="font-semibold text-blue-900">{cliente.nombre}</p>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <User className="text-blue-600" size={16} />
+                    <p className="font-semibold text-blue-900">{cliente.nombre}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setCliente(null);
+                      setClienteQuery("");
+                      setClientesOptions([]);
+                    }}
+                    className="text-xs px-2 py-1 rounded bg-blue-200 text-blue-700 hover:bg-blue-300 transition-colors"
+                  >
+                    Cambiar
+                  </button>
                 </div>
                 <div className="space-y-1 text-sm">
                   <p className="flex items-center gap-2">
