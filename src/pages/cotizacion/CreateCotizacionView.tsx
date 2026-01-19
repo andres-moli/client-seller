@@ -197,6 +197,7 @@ export const CreateCotizacionView = () => {
     value: number | string 
   ) => {
     const updated = [...items];
+    // @ts-ignore
     updated[index][field] = value as any;
 
     const item = updated[index];
