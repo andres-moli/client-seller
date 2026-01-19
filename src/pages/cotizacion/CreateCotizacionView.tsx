@@ -22,7 +22,7 @@ import {
 } from "../../components/ui/table";
 import Input from "../../components/form/input/InputField";
 import { formatCurrency, ToastyErrorGraph } from "../../lib/utils";
-import { useCreateCotizacionIntranetMutation } from "../../domain/graphql";
+import { useCreateCotizacionIntranetMutation, UserStatusTypes, useUsersQuery } from "../../domain/graphql";
 import { toast } from "sonner";
 import { useUser } from "../../context/UserContext";
 
@@ -71,6 +71,21 @@ export const CreateCotizacionView = () => {
   const [loadingCliente, setLoadingCliente] = useState(false);
   const [showClienteDropdown, setShowClienteDropdown] = useState(false);
   const [createCotizacion] = useCreateCotizacionIntranetMutation();
+  
+  /* ================= PLAZO ================= */
+  const [plazo, setPlazo] = useState("1");
+  
+  /* ================= TRABAJADOR ================= */
+  const { data: usersData } = useUsersQuery({
+    variables: {
+      pagination: {
+        skip: 0,
+        take: 99999
+      }
+    }
+  });
+  const trabajadores = useMemo(() => usersData?.users.filter(u => u.status === UserStatusTypes.Active) || [], [usersData]);
+  const [trabajadorSeleccionado, setTrabajadorSeleccionado] = useState<any>(null);
 
   useEffect(() => {
     if (clienteQuery.length < 2) {
@@ -167,7 +182,7 @@ export const CreateCotizacionView = () => {
         subtotalConIva,
         iva,
         stock: producto.Stock,
-        entrega: "Inmediata",
+        entrega: producto.Stock > 0 ? "Inmediata" : "",
         unidad: producto.Medida || "UN"
       }
     ]);
@@ -182,17 +197,23 @@ export const CreateCotizacionView = () => {
     value: number | string 
   ) => {
     const updated = [...items];
-    // @ts-ignore
     updated[index][field] = value as any;
 
-    const { costo, utilidad, cantidad } = updated[index];
-    const ivaPorcentaje = 19; // Asumir IVA del 19% si no viene en API
-    const venta = costo + costo * (utilidad / 100);
-    const subtotal = venta * cantidad;
+    const item = updated[index];
+    const { costo, utilidad, cantidad, venta } = item;
+    const ivaPorcentaje = 19;
+    
+    // Recalcular venta si cambió utilidad
+    let newVenta = venta;
+    if(field === "utilidad"){
+      newVenta = costo + costo * (Number(utilidad) / 100);
+    }
+    
+    const subtotal = newVenta * cantidad;
     const iva = subtotal * (ivaPorcentaje / 100);
     const subtotalConIva = subtotal + iva;
 
-    updated[index].venta = venta;
+    updated[index].venta = newVenta;
     updated[index].subtotal = subtotal;
     updated[index].iva = iva;
     updated[index].subtotalConIva = subtotalConIva;
@@ -241,12 +262,13 @@ export const CreateCotizacionView = () => {
               numeroCotizacion: cliente.nit,
               fecha: new Date(),
               nombreCliente: cliente.nombre,
-              nombreVendedor: user?.fullName || "Vendedor",
-              vendedor: user?.identificationNumber || "Vendedor",
+              nombreVendedor: trabajadorSeleccionado?.fullName || user?.fullName || "Vendedor",
+              vendedor: trabajadorSeleccionado?.identificationNumber || user?.identificationNumber || "Vendedor",
               ciudadCliente: cliente.ciudad,
               emailCliente: cliente.email,
               nitCliente: cliente.nit,
               valor: toInteger(totalVenta),
+              plazo: Number(plazo),
             },
             detalle: items.map((item) => ({
               CANTIDAD: item.cantidad,
@@ -293,8 +315,10 @@ export const CreateCotizacionView = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* SEARCH ROW - Cliente y Productos lado a lado */}
-        <div className="lg:col-span-3 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* SEARCH ROW - Cliente, Productos, Plazo y Trabajador */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Fila 1: Cliente y Productos */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* CLIENTE */}
           <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
@@ -472,6 +496,62 @@ export const CreateCotizacionView = () => {
               </div>
             )}
           </div>
+          </div>
+
+          {/* Fila 2: Plazo y Trabajador */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* PLAZO */}
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-2 rounded-lg bg-orange-50">
+                  <Calculator className="text-orange-600" size={18} />
+                </div>
+                <h3 className="font-semibold text-gray-900">Plazo de Entrega</h3>
+              </div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Días
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={plazo}
+                onChange={(e) => setPlazo(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* TRABAJADOR */}
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-2 rounded-lg bg-purple-50">
+                  <User className="text-purple-600" size={18} />
+                </div>
+                <h3 className="font-semibold text-gray-900">Asignar a Trabajador</h3>
+              </div>
+              <select
+                value={trabajadorSeleccionado?.id || ""}
+                onChange={(e) => {
+                  const trabajador = trabajadores.find(t => t.id === e.target.value);
+                  setTrabajadorSeleccionado(trabajador || null);
+                }}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+              >
+                <option value="">Selecciona un trabajador...</option>
+                {trabajadores.map((trab) => (
+                  <option key={trab.id} value={trab.id}>
+                    {trab.fullName}
+                  </option>
+                ))}
+              </select>
+              {trabajadorSeleccionado && (
+                <div className="mt-4 p-3 rounded-lg bg-purple-50 border border-purple-100">
+                  <p className="text-sm text-purple-900">
+                    <span className="font-medium">Asignado a:</span> {trabajadorSeleccionado.nombre || trabajadorSeleccionado.fullName}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* TABLA Y TOTALES - ocupa toda la fila debajo de búsquedas */}
@@ -585,7 +665,33 @@ export const CreateCotizacionView = () => {
                           </div>
                         </TableCell> 
                         <TableCell className="font-medium">
-                          {formatCurrency(item.venta)}
+                          {
+                            isEditing(i, 'venta') ? (
+                              <Input
+                                type="number"
+                                min="0"
+                                className="pl-7"
+                                value={item.venta}
+                                onChange={e =>
+                                  actualizarItem(i, "venta", Number(e.target.value))
+                                }
+                                // @ts-ignore
+                                onBlur={() => stopEditing(i, 'venta')}
+                                onKeyDown={(e: any) => { if (e.key === 'Enter') (e.target as HTMLElement).blur(); }}
+                              />
+                            ) : (
+                              <div
+                                tabIndex={0}
+                                role="button"
+                                onClick={() => startEditing(i, 'venta')}
+                                onKeyDown={(e) => { if (e.key === 'Enter') startEditing(i, 'venta'); }}
+                                className="cursor-pointer"
+                              >
+                                {formatCurrency(item.venta)}
+                              </div>
+                            )
+                          }
+                          {/* {formatCurrency(item.venta)} */}
                         </TableCell>
                         {/* <TableCell className="font-medium">
                           {formatCurrency(item.subtotalConIva)}

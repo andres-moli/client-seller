@@ -255,6 +255,7 @@ export type Cotizacion = {
   nombreVendedor: Scalars['String']['output'];
   numeroCotizacion: Scalars['String']['output'];
   plazo?: Maybe<Scalars['Float']['output']>;
+  prefijo?: Maybe<Scalars['String']['output']>;
   proyecto?: Maybe<Proyectos>;
   recordatorioEnviado: Scalars['Boolean']['output'];
   status?: Maybe<CotizacionStatusEnum>;
@@ -391,6 +392,7 @@ export type CreateCotizacionInput = {
   nombreCliente: Scalars['String']['input'];
   nombreVendedor: Scalars['String']['input'];
   numeroCotizacion: Scalars['String']['input'];
+  plazo: Scalars['Float']['input'];
   valor: Scalars['Float']['input'];
   vendedor: Scalars['String']['input'];
 };
@@ -4663,6 +4665,7 @@ export type UpdateCotizacionInput = {
   nombreCliente?: InputMaybe<Scalars['String']['input']>;
   nombreVendedor?: InputMaybe<Scalars['String']['input']>;
   numeroCotizacion?: InputMaybe<Scalars['String']['input']>;
+  plazo?: InputMaybe<Scalars['Float']['input']>;
   proyectoId?: InputMaybe<Scalars['ID']['input']>;
   status?: InputMaybe<CotizacionStatusEnum>;
   valor?: InputMaybe<Scalars['Float']['input']>;
