@@ -4,7 +4,7 @@ import { GraphQLError } from "graphql";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge"
 export const formatCurrency = (value: number) =>
-  value.toLocaleString("es-CO", { style: "currency", currency: "COP" });
+  value?.toLocaleString("es-CO", { style: "currency", currency: "COP" });
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

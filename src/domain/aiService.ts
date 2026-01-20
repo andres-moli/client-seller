@@ -1,6 +1,6 @@
 import axios from "axios";
 
-interface ItemCotizacionProcesado {
+export interface ItemCotizacionProcesado {
   referencia: string;
   descripcion: string;
   costo: number;
@@ -21,7 +21,13 @@ interface ItemProcesado {
   cantidad: number;
   utilidad: number;
 }
-
+interface ProductsApi {
+  referencia: string
+  Descripcion: string
+  Stock: number
+  Costo: number
+  Medida: string
+}
 /**
  * Procesa una solicitud de cotización usando ChatGPT
  * Hace 2 consultas transparentes al usuario:
@@ -46,31 +52,34 @@ export const procesarCotizacionConIA = async (
     for (const itemIA of itemsIA) {
       try {
         const producto = await buscarProducto(itemIA.producto);
-
-        if (producto) {
-          const utilidad = itemIA.utilidad || 20;
-          const ivaPorcentaje = producto.Iva || 19;
-          const venta =
-            producto.Costo + producto.Costo * (utilidad / 100);
-          const cantidad = itemIA.cantidad || 1;
-          const subtotal = venta * cantidad;
-          const iva = subtotal * (ivaPorcentaje / 100);
-          const subtotalConIva = subtotal + iva;
-
-          itemsProcesados.push({
-            referencia: producto.referencia,
-            descripcion: producto.Descripcion,
-            costo: producto.Costo,
-            utilidad,
-            cantidad,
-            venta,
-            subtotal,
-            subtotalConIva,
-            iva,
-            stock: producto.Stock,
-            entrega: producto.Stock > 0 ? "Inmediata" : "",
-            unidad: producto.Medida || "UN",
+        console.log("Producto encontrado:", producto);
+        if (producto && producto.length > 0) {
+          producto.forEach((p: ProductsApi) => {
+            const utilidad = itemIA.utilidad || 20;
+            const ivaPorcentaje = 19;
+            const venta =
+              p.Costo + p.Costo * (utilidad / 100);
+            const cantidad = itemIA.cantidad || 1;
+            const subtotal = venta * cantidad;
+            const iva = subtotal * (ivaPorcentaje / 100);
+            const subtotalConIva = subtotal + iva;
+            console.log("Subtotal con IVA:", subtotalConIva);
+            itemsProcesados.push({
+              referencia: p.referencia,
+              descripcion: p.Descripcion,
+              costo: p.Costo,
+              utilidad,
+              cantidad,
+              venta,
+              subtotal,
+              subtotalConIva,
+              iva,
+              stock: p.Stock,
+              entrega: p.Stock > 0 ? "Inmediata" : "",
+              unidad: p.Medida || "UN"
+            });
           });
+          console.log("Items procesados:", itemsProcesados);
         }
       } catch (error) {
         console.error(`Error buscando producto ${itemIA.producto}:`, error);
@@ -160,7 +169,7 @@ Notas importantes:
 /**
  * Busca un producto en la BD usando el mismo servicio de búsqueda
  */
-const buscarProducto = async (nombreProducto: string): Promise<any> => {
+const buscarProducto = async (nombreProducto: string): Promise<ProductsApi[]> => {
   try {
     const response = await axios.get(
       `https://intranet.cytech.net.co:3003/ventas/buscar/tienda/${encodeURIComponent(
@@ -169,13 +178,13 @@ const buscarProducto = async (nombreProducto: string): Promise<any> => {
     );
 
     if (response.data && response.data.length > 0) {
-      return response.data[0]; // Retorna el primer resultado
+      return response.data; // Retorna el primer resultado
     }
 
-    return null;
+    return [];
   } catch (error) {
     console.error(`Error buscando producto ${nombreProducto}:`, error);
-    return null;
+    return [];
   }
 };
 

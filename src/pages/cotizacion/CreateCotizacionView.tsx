@@ -327,14 +327,14 @@ export const CreateCotizacionView = () => {
         </div>
         
         {/* Botón IA */}
-        {/* <button
+        <button
           onClick={() => setShowAIModal(true)}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium"
-          title="Usar asistente de IA para agregar productos"
+          title="Usar asistente de IA para buscar y agregar productos"
         >
           <Bot size={18} />
           <span className="hidden sm:inline">Asistente IA</span>
-        </button> */}
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -860,7 +860,8 @@ export const CreateCotizacionView = () => {
       <AIModal 
         isOpen={showAIModal}
         onClose={() => setShowAIModal(false)}
-        onItemsAdded={(items) => setItems(prev => [...prev, ...items])}
+        onItemsAdded={(newItems) => setItems(prev => [...prev, ...newItems])}
+        items={items}
       />
     </div>
   );
