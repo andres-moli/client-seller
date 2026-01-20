@@ -11,7 +11,8 @@ import {
   Info,
   Percent,
   Tag,
-  Package2
+  Package2,
+  Bot
 } from "lucide-react";
 import {
   Table,
@@ -25,6 +26,7 @@ import { formatCurrency, ToastyErrorGraph } from "../../lib/utils";
 import { useCreateCotizacionIntranetMutation, UserStatusTypes, useUsersQuery } from "../../domain/graphql";
 import { toast } from "sonner";
 import { useUser } from "../../context/UserContext";
+import { AIModal } from "./AIModal";
 
 interface Cliente {
   nit: string;
@@ -33,6 +35,8 @@ interface Cliente {
   email: string;
   dirrecion: string;
   ciudad: string;
+  plazo: number;
+  vendedor: string;
 }
 
 interface ProductoAPI {
@@ -118,6 +122,9 @@ export const CreateCotizacionView = () => {
   const seleccionarCliente = (clienteSeleccionado: Cliente) => {
     setCliente(clienteSeleccionado);
     setClienteQuery(clienteSeleccionado.nombre);
+    setPlazo(String(clienteSeleccionado.plazo));
+    const trabajador = trabajadores.find(t => t.identificationNumber === clienteSeleccionado.vendedor);  
+    setTrabajadorSeleccionado(trabajador || null);
     setShowClienteDropdown(false);
     setClientesOptions([]);
   };
@@ -157,6 +164,9 @@ export const CreateCotizacionView = () => {
 
   // Estado para controlar edición por celda (index-field)
   const [editing, setEditing] = useState<Record<string, boolean>>({});
+
+  /* ================= IA MODAL ================= */
+  const [showAIModal, setShowAIModal] = useState(false);
   const isEditing = (index: number, field: string) => !!editing[`${index}-${field}`];
   const startEditing = (index: number, field: string) => setEditing(prev => ({ ...prev, [`${index}-${field}`]: true }));
   const stopEditing = (index: number, field: string) => setEditing(prev => { const copy = { ...prev }; delete copy[`${index}-${field}`]; return copy; });
@@ -251,6 +261,7 @@ export const CreateCotizacionView = () => {
     () => totalVenta - totalCosto,
     [totalVenta, totalCosto]
   );
+
   const handleGuardarCotizacion = async() => {
     if (!cliente) return;
     // Lógica para guardar la cotización usando createCotizacion
@@ -298,6 +309,7 @@ export const CreateCotizacionView = () => {
       setIsLoading(false);
     }
   }
+
   return (
     <div className="space-y-6 p-4 md:p-6">
       {/* HEADER */}
@@ -313,6 +325,16 @@ export const CreateCotizacionView = () => {
             <p className="text-sm text-gray-500">Complete los datos del cliente y agregue productos</p>
           </div>
         </div>
+        
+        {/* Botón IA */}
+        {/* <button
+          onClick={() => setShowAIModal(true)}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium"
+          title="Usar asistente de IA para agregar productos"
+        >
+          <Bot size={18} />
+          <span className="hidden sm:inline">Asistente IA</span>
+        </button> */}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -820,6 +842,12 @@ export const CreateCotizacionView = () => {
           </div>
         </div>
       </div>
+
+      <AIModal 
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        onItemsAdded={(items) => setItems(prev => [...prev, ...items])}
+      />
     </div>
   );
 };
