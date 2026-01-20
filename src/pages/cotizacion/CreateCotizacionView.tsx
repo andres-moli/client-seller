@@ -529,18 +529,32 @@ export const CreateCotizacionView = () => {
                 <div className="p-2 rounded-lg bg-orange-50">
                   <Calculator className="text-orange-600" size={18} />
                 </div>
-                <h3 className="font-semibold text-gray-900">Plazo de Entrega</h3>
+                <h3 className="font-semibold text-gray-900">Forma de pago</h3>
               </div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Días
-              </label>
-              <input
-                type="number"
-                min="1"
-                value={plazo}
-                onChange={(e) => setPlazo(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-              />
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Días
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={plazo}
+                    onChange={(e) => setPlazo(e.target.value)}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Forma de pago:</span>
+                  <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-bold ${
+                    +plazo > 1 
+                      ? 'bg-green-100 text-green-700 border border-green-200' 
+                      : 'bg-blue-100 text-blue-700 border border-blue-200'
+                  }`}>
+                    {+plazo > 1 ? 'CREDITO' : 'DE CONTADO'}
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* TRABAJADOR */}
