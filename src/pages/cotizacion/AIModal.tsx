@@ -33,7 +33,7 @@ interface AIModalProps {
   items?: any[];
 }
 
-export const AIModal = ({ isOpen, onClose, onItemsAdded, items = [] }: AIModalProps) => {
+export const AIModal = ({ isOpen, onClose, onItemsAdded}: AIModalProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [aiInput, setAiInput] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
@@ -65,7 +65,7 @@ export const AIModal = ({ isOpen, onClose, onItemsAdded, items = [] }: AIModalPr
     }
     recognition.onstart = () => setIsListening(true);
     recognition.onend = () => setIsListening(false);
-    recognition.onerror = (e: any) => {
+    recognition.onerror = () => {
       setIsListening(false);
       toast.error('Error al reconocer voz');
     };
